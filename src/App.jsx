@@ -10,6 +10,7 @@ import About from "./pages/About.jsx";
 import Blog from "./pages/Blog.jsx";
 import Saigonir from "./pages/Saigonir.jsx";
 import Tours from "./pages/Tours.jsx";
+import Reviews from "./pages/Reviews.jsx";
 // Tour Pages
 import HistoryTour from "./pages/tours/HistoryTour.jsx";
 import CoffeeMarket from "./pages/tours/CoffeeMarket.jsx";
@@ -50,6 +51,7 @@ const App = () => {
             <Route path="/blog" element={<Blog />} />
             <Route path="/saigonir" element={<Saigonir theme={theme} />} />
             <Route path="/tours" element={<Tours theme={theme} />} />
+            <Route path="/reviews" element={<Reviews theme={theme} />} />
 
             {/* Tour Pages */}
             <Route path="/tours/history" element={<HistoryTour theme={theme} />} />
