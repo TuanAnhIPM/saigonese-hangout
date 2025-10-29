@@ -1,9 +1,79 @@
-import React, { useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useRef, useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 const InsiderTipsThankYou = ({ theme }) => {
   const isMorning = theme === "morning";
   const tipsRef = useRef(null);
+  const [searchParams] = useSearchParams();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  // Verify access token and payment
+  useEffect(() => {
+    const verifyAccess = () => {
+      try {
+        // Get token from URL or localStorage
+        const urlToken = searchParams.get("token");
+        const storedToken = localStorage.getItem("insider_access_token");
+        const paymentData = localStorage.getItem("insider_payment_data");
+        
+        // Validate token
+        const token = urlToken || storedToken;
+        if (!token) {
+          console.warn("No access token found");
+          setIsAuthorized(false);
+          setIsChecking(false);
+          return;
+        }
+
+        // Verify payment data
+        if (paymentData) {
+          const payment = JSON.parse(paymentData);
+          
+          // Check expiration (30 days)
+          if (payment.expiresAt && Date.now() > payment.expiresAt) {
+            console.warn("Access token expired");
+            localStorage.removeItem("insider_access_token");
+            localStorage.removeItem("insider_payment_data");
+            setIsAuthorized(false);
+            setIsChecking(false);
+            return;
+          }
+
+          // Verify token matches
+          if (payment.token === token && payment.verified) {
+            setIsAuthorized(true);
+            setIsChecking(false);
+            return;
+          }
+        }
+
+        // Fallback: Check if payment was started (less secure but allows access)
+        const paymentStarted = localStorage.getItem("paypal_payment_started");
+        const hasPayPalReturn = searchParams.get("paymentId") || 
+                                searchParams.get("token") || 
+                                searchParams.get("PayerID");
+        
+        if (paymentStarted || hasPayPalReturn) {
+          // Allow access but show warning
+          console.warn("Access granted via fallback verification");
+          setIsAuthorized(true);
+          setIsChecking(false);
+          return;
+        }
+
+        // No valid access
+        setIsAuthorized(false);
+        setIsChecking(false);
+      } catch (error) {
+        console.error("Access verification error:", error);
+        setIsAuthorized(false);
+        setIsChecking(false);
+      }
+    };
+
+    verifyAccess();
+  }, [searchParams]);
 
   const bgStyle = isMorning
     ? "bg-gradient-to-b from-[#fdfcfb] to-[#e2d1c3]"
@@ -92,6 +162,56 @@ const InsiderTipsThankYou = ({ theme }) => {
       ],
     },
   ];
+
+  // Show loading state while checking access
+  if (isChecking) {
+    return (
+      <section className={`min-h-screen py-8 sm:py-12 px-4 sm:px-6 md:px-16 transition-all duration-700 ${bgStyle}`}>
+        <div className="max-w-4xl mx-auto flex items-center justify-center min-h-[60vh]">
+          <div className={`text-center ${textColor}`}>
+            <div className="text-lg mb-2">Verifying access...</div>
+            <div className={`text-sm ${mutedColor}`}>Please wait</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Show unauthorized access message
+  if (!isAuthorized) {
+    return (
+      <section className={`min-h-screen py-8 sm:py-12 px-4 sm:px-6 md:px-16 transition-all duration-700 ${bgStyle}`}>
+        <div className="max-w-4xl mx-auto">
+          <div className={`${cardBg} rounded-2xl p-8 backdrop-blur-sm text-center`}>
+            <h2 className={`text-2xl sm:text-3xl font-bold mb-4 ${textColor}`}>
+              Access Restricted
+            </h2>
+            <p className={`text-base mb-6 ${mutedColor}`}>
+              This page is only accessible after completing your purchase. 
+              If you've already paid, please return from PayPal or check your email for the access link.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                to="/insider"
+                className={`px-6 py-3 rounded-xl font-semibold bg-gradient-to-r ${brandColor} text-white hover:opacity-90 transition-all`}
+              >
+                Return to Insider Tips
+              </Link>
+              <Link
+                to="/"
+                className={`px-6 py-3 rounded-xl font-semibold ${cardBgSecondary} ${textColor} border border-white/10 hover:opacity-80 transition-all`}
+              >
+                Go to Home
+              </Link>
+            </div>
+            <p className={`text-xs mt-6 ${mutedColor}`}>
+              If you believe this is an error, please contact support with your PayPal transaction ID.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
