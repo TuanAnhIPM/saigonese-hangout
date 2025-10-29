@@ -4,6 +4,7 @@ import Testimonials from "../components/Testimonials.jsx";
 import About from "../pages/About.jsx";
 import CommunitySection from "../pages/Community.jsx";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 
 const Home = ({ theme }) => {
@@ -73,7 +74,7 @@ const Home = ({ theme }) => {
   return (
     <>
       {/* Hero Section with Auto Slideshow */}
-      <section className="relative w-full h-[70vh] sm:h-[75vh] md:h-[80vh] lg:h-[85vh] overflow-hidden">
+      <section className="relative w-full h-[70vh] sm:h-[75vh] md:h-[80vh] lg:h-[85vh] overflow-hidden -mt-8 sm:-mt-6 md:-mt-6">
         {/* Background Images with Smooth Transitions */}
         {bgImages.map((image, index) => (
           <div
@@ -125,7 +126,7 @@ const Home = ({ theme }) => {
             </h2>
 
             <p
-              className={`text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed ${
+              className={`text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-4 sm:mb-6 ${
                 isMorning ? "text-[#333]" : "text-gray-200"
               }`}
             >
@@ -133,6 +134,17 @@ const Home = ({ theme }) => {
                 ? "Start your day with Saigon's soft sunlight, aroma of coffee, and vibrant morning streets."
                 : "Let the city lights, flavors, and rhythms lead you through Saigon's nightlife."}
             </p>
+            
+            <Link
+              to="/insider"
+              className={`inline-block text-xs sm:text-sm px-4 py-2 rounded-lg font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5016] focus-visible:ring-offset-2 ${
+                isMorning
+                  ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
+                  : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
+              }`}
+            >
+              💡 Unlock Insider Tips for $1.99
+            </Link>
           </div>
         </div>
       </section>
@@ -154,7 +166,7 @@ const Home = ({ theme }) => {
       <CommunitySection theme={theme} />
 
       <section>
-        <Footer />
+        <Footer theme={theme} />
       </section>
     </>
   );

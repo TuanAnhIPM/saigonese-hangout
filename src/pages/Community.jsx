@@ -8,14 +8,14 @@ const CommunitySection = ({ theme }) => {
     <section
       className={`py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-16 text-center transition-all duration-700 ${
         isMorning
-          ? "bg-[#fffaf4] text-[#0f3e2c]"
+          ? "bg-[#fffaf4] text-[#2d5016]"
           : "bg-[#0b0b14] text-white"
       }`}
     >
       <div className="max-w-4xl mx-auto">
         <h2
           className={`text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 sm:mb-6 ${
-            isMorning ? "text-[#0f3e2c]" : "text-[#4cc9f0]"
+            isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
           }`}
         >
           Saigon for Saigon ❤️
@@ -56,8 +56,8 @@ const CommunitySection = ({ theme }) => {
             to="/tours"
             className={`inline-block font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl transition text-sm sm:text-base ${
               isMorning
-                ? "bg-[#0f3e2c] text-white hover:bg-[#14503a]"
-                : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90"
+                ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5016] focus-visible:ring-offset-2"
+                : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4cc9f0] focus-visible:ring-offset-2"
             }`}
           >
             Book a Tour → Give a Meal

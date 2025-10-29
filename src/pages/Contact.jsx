@@ -8,7 +8,7 @@ const Contact = () => {
       <section className="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 md:px-8 text-center py-8 sm:py-12">
         {/* Header */}
         <div className="mb-6 sm:mb-8 max-w-2xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#0f3e2c] mb-3 sm:mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#2d5016] mb-3 sm:mb-4 leading-tight">
             Contact Us
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed px-2">
@@ -42,7 +42,7 @@ const Contact = () => {
             </a>
             <a
               href="https://www.instagram.com/saigonesehangout/"
-              className="flex-1 bg-[#0f3e2c] px-6 py-4 sm:py-3 rounded-xl text-white font-semibold text-base sm:text-lg hover:bg-[#14503a] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              className="flex-1 bg-[#2d5016] px-6 py-4 sm:py-3 rounded-xl text-white font-semibold text-base sm:text-lg hover:bg-[#3a7d2f] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5016] focus-visible:ring-offset-2"
             >
               <span className="text-lg sm:text-xl">📸</span>
               Instagram
@@ -53,7 +53,7 @@ const Contact = () => {
         {/* Additional Contact Info */}
         <div className="mt-8 sm:mt-10 md:mt-12 max-w-lg mx-auto">
           <div className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200">
-            <h3 className="text-lg sm:text-xl font-semibold text-[#0f3e2c] mb-3">
+            <h3 className="text-lg sm:text-xl font-semibold text-[#2d5016] mb-3">
               Other Ways to Reach Us
             </h3>
             <div className="space-y-2 text-sm sm:text-base text-gray-700">
@@ -73,7 +73,7 @@ const Contact = () => {
         </div>
       </section>
 
-      <Footer />
+      <Footer theme="morning" />
     </div>
   );
 };

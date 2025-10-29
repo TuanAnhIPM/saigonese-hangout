@@ -1,16 +1,35 @@
-# React + Vite
+# Insider Tips MVP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Static MVP to sell and deliver “Unlock Saigon Insider Tips for $1”. No backend.
 
-Currently, two official plugins are available:
+## Routes
+- `/insider`: Landing page with value props, teaser, social proof, and CTA
+- `/insider/thank-you`: Gated page that contains the full tips content
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How payments work (Stripe Payment Link)
+1. Create a Payment Link in Stripe Dashboard.
+2. In the Payment Link settings, set the post-payment redirect URL to:
+   - `https://your-domain.com/insider/thank-you`
+3. Copy the Payment Link URL and update it in `insider/index.html`:
+   - Find `STRIPE_PAYMENT_LINK` and paste your live link.
+4. Optional: In Stripe’s receipt settings, add a note with the same URL so buyers have it in email.
 
-## React Compiler
+## Gating
+- MVP uses an obscure URL (`/insider/thank-you`). If abuse appears, add a one-time token layer later.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Export / Offline access
+- On the thank-you page users can “Copy all” or “Print / Save as PDF” (uses the browser print dialog with print styles).
 
-## Expanding the ESLint configuration
+## Deploy
+Any static host works (GitHub Pages, Netlify, Vercel, S3, nginx). Ensure both routes resolve:
+- If using a custom domain: point it to your static host
+- Make sure the `/insider/thank-you` path serves `insider/thank-you/index.html`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Add CTAs around your site
+- Home hero (small link)
+- Testimonials section
+- Tours pages (post-tour upsell)
+- Footer badge
+
+## Refunds
+Offer a simple money-back guarantee. You can process refunds directly in Stripe.

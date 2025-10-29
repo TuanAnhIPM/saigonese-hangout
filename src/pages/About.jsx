@@ -12,7 +12,7 @@ const About = ({ theme }) => {
       <div className="max-w-5xl mx-auto">
         <h2
           className={`text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 sm:mb-6 ${
-            isMorning ? "text-[#0f3e2c]" : "text-[#4cc9f0]"
+            isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
           }`}
         >
           About{" "}
@@ -46,7 +46,7 @@ const About = ({ theme }) => {
           >
             <h3
               className={`text-xl sm:text-2xl font-semibold mb-3 ${
-                isMorning ? "text-[#0f3e2c]" : "text-[#ffcd3c]"
+                isMorning ? "text-[#2d5016]" : "text-[#ffcd3c]"
               }`}
             >
               Our Mission 🎯
@@ -67,7 +67,7 @@ const About = ({ theme }) => {
           >
             <h3
               className={`text-xl sm:text-2xl font-semibold mb-3 ${
-                isMorning ? "text-[#0f3e2c]" : "text-[#ffcd3c]"
+                isMorning ? "text-[#2d5016]" : "text-[#ffcd3c]"
               }`}
             >
               Why Tour With Us 😎
@@ -83,7 +83,7 @@ const About = ({ theme }) => {
 
         <p
           className={`font-semibold mt-8 sm:mt-10 md:mt-12 text-base sm:text-lg md:text-xl ${
-            isMorning ? "text-[#0f3e2c]" : "text-[#4cc9f0]"
+            isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
           }`}
         >
           Come ride with us — feel Saigon, not just see it 🇻🇳✨

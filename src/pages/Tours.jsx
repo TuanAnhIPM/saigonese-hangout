@@ -67,7 +67,7 @@ const Tours = ({ theme }) => {
       }`}>
         <div className="text-center px-4 sm:px-6">
           <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 sm:mb-6 ${
-            isMorning ? "text-[#0f3e2c]" : "text-white"
+            isMorning ? "text-[#2d5016]" : "text-white"
           }`}>
             All <span className={isMorning ? "text-[#c2a46b]" : "text-[#ffcd3c]"}>Tours</span>
           </h1>
@@ -88,7 +88,7 @@ const Tours = ({ theme }) => {
           {/* Introduction */}
           <div className="text-center mb-12 sm:mb-16">
             <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 ${
-              isMorning ? "text-[#0f3e2c]" : "text-white"
+              isMorning ? "text-[#2d5016]" : "text-white"
             }`}>
               Explore Saigon Your Way
             </h2>
@@ -178,20 +178,20 @@ const Tours = ({ theme }) => {
                   const whatsappUrl = `https://wa.me/+84978270038?text=${encodeURIComponent(message)}`;
                   window.open(whatsappUrl, '_blank');
                 }}
-                className={`px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-105 ${
+                className={`px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                   isMorning
-                    ? "bg-[#0f3e2c] text-white hover:bg-[#1a5a3f]"
-                    : "bg-[#4cc9f0] text-[#0b0b14] hover:bg-[#3ab5d9]"
+                    ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f] focus-visible:ring-[#2d5016]"
+                    : "bg-[#4cc9f0] text-[#0b0b14] hover:bg-[#3ab5d9] focus-visible:ring-[#4cc9f0]"
                 }`}
               >
                 📞 Contact Us for Tours
               </button>
               <a
                 href="/saigonir"
-                className={`px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-105 border-2 ${
+                className={`px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 hover:scale-105 border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                   isMorning
-                    ? "border-[#0f3e2c] text-[#0f3e2c] hover:bg-[#0f3e2c] hover:text-white"
-                    : "border-[#4cc9f0] text-[#4cc9f0] hover:bg-[#4cc9f0] hover:text-[#0b0b14]"
+                    ? "border-[#2d5016] text-[#2d5016] hover:bg-[#2d5016] hover:text-white focus-visible:ring-[#2d5016]"
+                    : "border-[#4cc9f0] text-[#4cc9f0] hover:bg-[#4cc9f0] hover:text-[#0b0b14] focus-visible:ring-[#4cc9f0]"
                 }`}
               >
                 🛍️ Shop Souvenirs
@@ -202,7 +202,7 @@ const Tours = ({ theme }) => {
       </section>
 
 
-      <Footer />
+      <Footer theme={theme} />
     </div>
   );
 };

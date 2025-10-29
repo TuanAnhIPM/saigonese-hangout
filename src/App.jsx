@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
 import ThemeNavbar from "./components/Navbar/ThemeNavbar.jsx";
-import TourNavbar from "./components/Navbar/TourNavbar.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Home from "./pages/Home.jsx";
 import Contact from "./pages/Contact.jsx";
@@ -11,6 +10,8 @@ import Blog from "./pages/Blog.jsx";
 import Saigonir from "./pages/Saigonir.jsx";
 import Tours from "./pages/Tours.jsx";
 import Reviews from "./pages/Reviews.jsx";
+import InsiderTips from "./pages/InsiderTips.jsx";
+import InsiderTipsThankYou from "./pages/InsiderTipsThankYou.jsx";
 // Tour Pages
 import HistoryTour from "./pages/tours/HistoryTour.jsx";
 import CoffeeMarket from "./pages/tours/CoffeeMarket.jsx";
@@ -34,13 +35,12 @@ const App = () => {
       className={`min-h-screen transition-colors duration-700 ${
         theme === "night"
           ? "bg-gradient-to-b from-[#0b0b14] via-[#1a052e] to-[#3d0f55] text-white"
-          : "bg-gradient-to-b from-[#fdfcfb] to-[#e2d1c3] text-[#0f3e2c]"
+          : "bg-gradient-to-b from-[#fdfcfb] to-[#e2d1c3] text-[#2d5016]"
       }`}
     >
       <BrowserRouter>
         <ScrollToTop />
         <ThemeNavbar theme={theme} setTheme={setTheme} />
-        <TourNavbar theme={theme} />
 
         <main className="pt-32 sm:pt-28 md:pt-28 px-4 md:px-10">
           <Routes>
@@ -52,6 +52,8 @@ const App = () => {
             <Route path="/saigonir" element={<Saigonir theme={theme} />} />
             <Route path="/tours" element={<Tours theme={theme} />} />
             <Route path="/reviews" element={<Reviews theme={theme} />} />
+            <Route path="/insider" element={<InsiderTips theme={theme} />} />
+            <Route path="/insider/thank-you" element={<InsiderTipsThankYou theme={theme} />} />
 
             {/* Tour Pages */}
             <Route path="/tours/history" element={<HistoryTour theme={theme} />} />

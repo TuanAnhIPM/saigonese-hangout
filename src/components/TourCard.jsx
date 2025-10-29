@@ -25,7 +25,7 @@ const TourCard = ({ title, desc, img, theme, slug }) => {
       className={`rounded-xl shadow-lg overflow-hidden hover:scale-105 transition border ${
         theme === "night"
           ? "border-white/20 bg-[#121212] text-white"
-          : "border-gray-200 bg-white text-[#0f3e2c]"
+          : "border-gray-200 bg-white text-[#2d5016]"
       }`}
     >
       {/* Image links to detail page */}
@@ -47,7 +47,7 @@ const TourCard = ({ title, desc, img, theme, slug }) => {
               className={`px-3 py-2 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl border font-medium transition text-sm sm:text-base ${
                 theme === "night"
                   ? "border-white text-white hover:bg-white/10"
-                  : "border-[#0f3e2c] text-[#0f3e2c] hover:bg-[#0f3e2c]/10"
+                  : "border-[#2d5016] text-[#2d5016] hover:bg-[#2d5016]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5016] focus-visible:ring-offset-2"
               }`}
             >
               Basic
@@ -58,7 +58,7 @@ const TourCard = ({ title, desc, img, theme, slug }) => {
               className={`px-3 py-2 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium transition text-sm sm:text-base ${
                 theme === "night"
                   ? "bg-white text-[#0f3e2c] hover:bg-white/80"
-                  : "bg-[#0f3e2c] text-white hover:bg-[#0f3e2c]/90"
+                  : "bg-[#2d5016] text-white hover:bg-[#3a7d2f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5016] focus-visible:ring-offset-2"
               }`}
             >
               Premium
@@ -69,10 +69,10 @@ const TourCard = ({ title, desc, img, theme, slug }) => {
             {isSpecialtyTour ? (
               <button
                 onClick={handleWhatsAppBooking}
-                className={`w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base text-center ${
+                className={`w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                   theme === "night"
-                    ? "bg-white text-[#0f3e2c] hover:bg-white/80 hover:shadow-lg"
-                    : "bg-[#0f3e2c] text-white hover:bg-[#0f3e2c]/90 hover:shadow-lg"
+                    ? "bg-white text-[#2d5016] hover:bg-white/80 hover:shadow-lg focus-visible:ring-[#4cc9f0]"
+                    : "bg-[#2d5016] text-white hover:bg-[#3a7d2f] hover:shadow-lg focus-visible:ring-[#2d5016]"
                 }`}
               >
                 Book Tour
@@ -80,10 +80,10 @@ const TourCard = ({ title, desc, img, theme, slug }) => {
             ) : (
               <Link
                 to={isNightlife ? `/booking/${slug}` : isHistory ? `/booking/${slug}` : `/booking/${slug}/basic`}
-                className={`w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base text-center ${
+                className={`w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-sm sm:text-base text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                   theme === "night"
-                    ? "bg-white text-[#0f3e2c] hover:bg-white/80 hover:shadow-lg"
-                    : "bg-[#0f3e2c] text-white hover:bg-[#0f3e2c]/90 hover:shadow-lg"
+                    ? "bg-white text-[#2d5016] hover:bg-white/80 hover:shadow-lg focus-visible:ring-[#4cc9f0]"
+                    : "bg-[#2d5016] text-white hover:bg-[#3a7d2f] hover:shadow-lg focus-visible:ring-[#2d5016]"
                 }`}
               >
                 {isNightlife ? "Premium Tour" : "Book Tour"}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const IMAGES = [
   "/images/reviews/799b02374d80fadea391.jpg",
@@ -54,9 +54,19 @@ const IMAGES = [
 ];
 
 const Reviews = ({ theme }) => {
+  const [selectedSrc, setSelectedSrc] = useState(null);
   const textColor = theme === "night" ? "text-white" : "text-[#0f3e2c]";
   const subColor = theme === "night" ? "text-gray-300" : "text-gray-600";
   const cardBg = theme === "night" ? "bg-[#120d1a]/40" : "bg-white";
+
+  useEffect(() => {
+    if (!selectedSrc) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setSelectedSrc(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedSrc]);
 
   return (
     <section className="max-w-6xl mx-auto">
@@ -67,11 +77,47 @@ const Reviews = ({ theme }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
         {IMAGES.map((src, i) => (
-          <div key={i} className={`rounded-xl overflow-hidden shadow ${cardBg} border border-white/10`}>
-            <img src={src} alt={`Review ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+          <div
+            key={i}
+            className={`rounded-xl overflow-hidden shadow ${cardBg} border border-white/10`}
+          >
+            <img
+              src={src}
+              alt="Customer review"
+              className="w-full h-full object-cover cursor-pointer"
+              loading="lazy"
+              onClick={() => setSelectedSrc(src)}
+            />
           </div>
         ))}
       </div>
+
+      {selectedSrc && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setSelectedSrc(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            className="absolute top-4 right-4 text-white/90 hover:text-white text-2xl"
+            aria-label="Close"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedSrc(null);
+            }}
+          >
+            ×
+          </button>
+          <img
+            src={selectedSrc}
+            alt="Customer review enlarged"
+            className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </section>
   );
 };

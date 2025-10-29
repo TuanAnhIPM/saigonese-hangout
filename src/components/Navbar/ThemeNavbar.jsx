@@ -13,32 +13,50 @@ const ThemeNavbar = ({ theme, setTheme }) => {
   return (
     <>
       {/* Main Navigation Bar */}
-      <nav className="fixed top-0 left-0 w-full bg-[#0b0b14]/95 backdrop-blur-sm text-white z-50 shadow-lg">
+      <nav className={`fixed top-0 left-0 w-full backdrop-blur-sm z-50 shadow-lg ${
+        isMorning 
+          ? "bg-white/95 text-[#2d5016]" 
+          : "bg-[#0b0b14]/95 text-white"
+      }`}>
         <div className="flex justify-between items-center px-4 sm:px-6 py-2 sm:py-3">
           {/* Logo */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <img
-              src="/images/logo.png"
-              alt="Saigonese Hang-out Logo"
-              className="w-8 h-6 sm:w-11 sm:h-9 rounded-full object-cover"
-            />
-            <Link to="/" className="text-lg sm:text-xl font-bold gradient-text">
+            <div className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full overflow-hidden flex items-center justify-center ${
+              isMorning ? "bg-white" : "bg-white/5"
+            }`}>
+              <img
+                src={isMorning ? "/images/morning-logo.png" : "/images/night-logo.png"}
+                alt={isMorning ? "Saigonese Hang-out Morning Logo" : "Saigonese Hang-out Night Logo"}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <Link to="/" className={`text-lg sm:text-xl font-bold ${
+              isMorning ? "text-[#2d5016]" : ""
+            }`}>
               Saigonese Hang-out
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex gap-6 lg:gap-8 font-semibold">
-            <Link to="/" className="hover:text-[#4cc9f0] transition-colors">
+            <Link to="/" className={`transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+              isMorning ? "hover:text-[#3a7d2f] focus-visible:ring-[#2d5016]" : "hover:text-[#4cc9f0] focus-visible:ring-[#4cc9f0]"
+            }`}>
               Home
             </Link>
-            <Link to="/tours" className="hover:text-[#4cc9f0] transition-colors">
+            <Link to="/tours" className={`transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+              isMorning ? "hover:text-[#3a7d2f] focus-visible:ring-[#2d5016]" : "hover:text-[#4cc9f0] focus-visible:ring-[#4cc9f0]"
+            }`}>
               Tours
             </Link>
-            <Link to="/blog" className="hover:text-[#4cc9f0] transition-colors">
+            <Link to="/blog" className={`transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+              isMorning ? "hover:text-[#3a7d2f] focus-visible:ring-[#2d5016]" : "hover:text-[#4cc9f0] focus-visible:ring-[#4cc9f0]"
+            }`}>
               Blog
             </Link>
-            <Link to="/saigonir" className="hover:text-[#4cc9f0] transition-colors">
+            <Link to="/saigonir" className={`transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+              isMorning ? "hover:text-[#3a7d2f] focus-visible:ring-[#2d5016]" : "hover:text-[#4cc9f0] focus-visible:ring-[#4cc9f0]"
+            }`}>
               Saigonir
             </Link>
           </div>
@@ -48,36 +66,44 @@ const ThemeNavbar = ({ theme, setTheme }) => {
             {/* Social Media Buttons - Desktop Only */}
             <div className="hidden md:flex items-center gap-2 sm:gap-4">
               <a href="https://www.instagram.com/saigonesehangout/" target="_blank" rel="noreferrer">
-                <FaInstagram className="text-lg sm:text-2xl hover:text-[#c77dff] transition" />
+                <FaInstagram className={`text-lg sm:text-2xl transition ${
+                  isMorning ? "text-[#2d5016] hover:text-[#3a7d2f]" : "hover:text-[#c77dff]"
+                }`} />
               </a>
               <a href="https://wa.me/+84978270038" target="_blank" rel="noreferrer">
-                <FaWhatsapp className="text-lg sm:text-2xl hover:text-green-400 transition" />
+                <FaWhatsapp className={`text-lg sm:text-2xl transition ${
+                  isMorning ? "text-[#2d5016] hover:text-green-600" : "hover:text-green-400"
+                }`} />
               </a>
               <a href="mailto:thestoriesguys@gmail.com">
-                <FaEnvelope className="text-lg sm:text-2xl hover:text-[#4cc9f0] transition" />
+                <FaEnvelope className={`text-lg sm:text-2xl transition ${
+                  isMorning ? "text-[#2d5016] hover:text-[#3a7d2f]" : "hover:text-[#4cc9f0]"
+                }`} />
               </a>
             </div>
 
             {/* Mobile Menu Button */}
             <button
               onClick={toggleMobileMenu}
-              className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+              className={`md:hidden p-2 rounded-lg transition-colors ${
+                isMorning ? "hover:bg-[#e6f4ea]" : "hover:bg-white/10"
+              }`}
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
-                <FaTimes className="w-5 h-5" />
+                <FaTimes className={`w-5 h-5 ${isMorning ? "text-[#2d5016]" : "text-white"}`} />
               ) : (
-                <FaBars className="w-5 h-5" />
+                <FaBars className={`w-5 h-5 ${isMorning ? "text-[#2d5016]" : "text-white"}`} />
               )}
             </button>
 
             {/* Theme Toggle Button */}
             <button
               onClick={() => setTheme(isMorning ? "night" : "morning")}
-              className={`w-[100px] sm:w-[130px] px-2 sm:px-4 py-1 sm:py-2 ml-2 sm:ml-3 rounded-lg sm:rounded-xl font-semibold transition text-center text-xs sm:text-sm ${
+              className={`w-[100px] sm:w-[130px] px-2 sm:px-4 py-1 sm:py-2 ml-2 sm:ml-3 rounded-lg sm:rounded-xl font-semibold transition text-center text-xs sm:text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                 isMorning
-                  ? "bg-gradient-to-r from-[#ffcd3c] to-[#ff914d] text-[#0f3e2c] hover:opacity-90"
-                  : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90"
+                  ? "bg-gradient-to-r from-[#ffcd3c] to-[#ff914d] text-[#2d5016] hover:opacity-90 focus-visible:ring-[#2d5016]"
+                  : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
               }`}
             >
               {isMorning ? "🌞 Morning" : "🌙 Night"}
@@ -87,32 +113,52 @@ const ThemeNavbar = ({ theme, setTheme }) => {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-[#0b0b14]/98 backdrop-blur-sm border-t border-white/10">
+          <div className={`md:hidden backdrop-blur-sm border-t ${
+            isMorning 
+              ? "bg-white/98 border-[#cfe8d1]" 
+              : "bg-[#0b0b14]/98 border-white/10"
+          }`}>
             <div className="px-4 py-4 space-y-3">
               <Link
                 to="/"
-                className="block py-2 text-white hover:text-[#4cc9f0] transition-colors font-medium"
+                className={`block py-2 transition-colors font-medium ${
+                  isMorning 
+                    ? "text-[#2d5016] hover:text-[#3a7d2f]" 
+                    : "text-white hover:text-[#4cc9f0]"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 to="/tours"
-                className="block py-2 text-white hover:text-[#4cc9f0] transition-colors font-medium"
+                className={`block py-2 transition-colors font-medium ${
+                  isMorning 
+                    ? "text-[#2d5016] hover:text-[#3a7d2f]" 
+                    : "text-white hover:text-[#4cc9f0]"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Tours
               </Link>
               <Link
                 to="/blog"
-                className="block py-2 text-white hover:text-[#4cc9f0] transition-colors font-medium"
+                className={`block py-2 transition-colors font-medium ${
+                  isMorning 
+                    ? "text-[#2d5016] hover:text-[#3a7d2f]" 
+                    : "text-white hover:text-[#4cc9f0]"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Blog
               </Link>
               <Link
                 to="/saigonir"
-                className="block py-2 text-white hover:text-[#4cc9f0] transition-colors font-medium"
+                className={`block py-2 transition-colors font-medium ${
+                  isMorning 
+                    ? "text-[#2d5016] hover:text-[#3a7d2f]" 
+                    : "text-white hover:text-[#4cc9f0]"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Saigonir
