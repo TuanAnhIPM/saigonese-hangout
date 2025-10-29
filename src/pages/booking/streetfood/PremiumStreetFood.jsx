@@ -25,7 +25,7 @@ const PremiumStreetFood = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 px-4 pb-8">
+    <div className="min-h-screen pb-8">
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-12">

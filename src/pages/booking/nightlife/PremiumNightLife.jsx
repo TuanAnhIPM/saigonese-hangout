@@ -26,7 +26,7 @@ const PremiumNightLife = ({ theme }) => {
   };
 
   return (
-    <div className={`min-h-screen pt-20 px-4 pb-8 ${isMorning ? 'bg-gradient-to-br from-amber-50 to-orange-50' : 'bg-gradient-to-br from-slate-900 to-gray-900'}`}>
+    <div className="min-h-screen pb-8">
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-12">
