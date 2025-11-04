@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const InsiderTips = ({ theme }) => {
   const isMorning = theme === "morning";
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [couponMsg, setCouponMsg] = useState("");
 
@@ -79,7 +80,8 @@ const InsiderTips = ({ theme }) => {
       localStorage.setItem('insider_access_token', token);
       localStorage.setItem('insider_payment_data', JSON.stringify(paymentData));
       localStorage.setItem('insider_item', 'insider');
-      window.location.href = `${thankYouUrl}?token=${encodeURIComponent(token)}&item=insider`;
+      // Use navigate instead of window.location.href for React Router
+      navigate(`/insider/thank-you?token=${encodeURIComponent(token)}&item=insider`);
     } else {
       setCouponMsg('Invalid coupon');
     }
