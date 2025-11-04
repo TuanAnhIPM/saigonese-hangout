@@ -143,7 +143,7 @@ const Home = ({ theme }) => {
                   : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
               }`}
             >
-              💡 Unlock Insider Tips for $1.99
+              💡 Unlock Insider Tips for $4.99
             </Link>
           </div>
         </div>

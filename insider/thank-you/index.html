@@ -130,6 +130,26 @@
     downloadBtn?.addEventListener('click', () => {
       window.print();
     });
+
+    // If arriving from Stripe Checkout, verify session server-side
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const sessionId = params.get('session_id');
+      if (!sessionId) return; // No Stripe session -> likely PayPal or direct; do nothing
+
+      try {
+        const resp = await fetch(`/api/verify-checkout?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await resp.json();
+        if (!data?.ok) {
+          // Not paid / wrong amount / invalid session -> send back to landing
+          location.replace('/insider');
+        }
+        // else keep showing content
+      } catch (e) {
+        // On error, be safe and bounce
+        location.replace('/insider');
+      }
+    })();
   </script>
 </body>
 </html>

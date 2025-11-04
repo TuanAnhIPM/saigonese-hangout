@@ -1,103 +1,28 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const InsiderTips = ({ theme }) => {
   const isMorning = theme === "morning";
-  const paypalInvoiceLink = "https://www.paypal.com/invoice/p/#SX5BJMNA6ETYBN7P";
+  const [searchParams] = useSearchParams();
+  const [coupon, setCoupon] = useState("");
+  const [couponMsg, setCouponMsg] = useState("");
+
+  // PayPal configuration
+  const paypalInvoiceLink = "https://www.paypal.com/ncp/payment/EC5ZGXT2TUN4L";
   const thankYouUrl = window.location.origin + "/insider/thank-you";
-  const products = [
-    { 
-      name: "Bar, Club.xlsx", 
-      file: "Bar, Club.xlsx", 
-      price: 1.99,
-      title: "Nightlife Guide",
-      description: "Top-rated bars & clubs locals frequent. Door policies, best nights, and insider deals.",
-      badge: "Most Popular"
-    },
-    { 
-      name: "Food.xlsx", 
-      file: "Food.xlsx", 
-      price: 1.99,
-      title: "Food & Dining Guide",
-      description: "Hidden gems, street food spots, and restaurants worth your money. Updated regularly.",
-      badge: "Best Value"
-    },
-    { 
-      name: "Historical Places.xlsx", 
-      file: "Historical Places.xlsx", 
-      price: 1.99,
-      title: "Historical Sites",
-      description: "Must-see landmarks, cultural sites, and museums with local context you won't find in guides.",
-      badge: "Local Insights"
-    },
-  ];
 
-  // Generate secure access token
-  const generateAccessToken = () => {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 15);
-    return btoa(`${timestamp}-${random}-${Math.random().toString(36).substring(2, 15)}`)
-      .replace(/[+/=]/g, (char) => {
-        const replacements = { '+': '-', '/': '_', '=': '' };
-        return replacements[char];
-      });
-  };
-
-  // Validate PayPal return parameters
-  const isValidPayPalReturn = (params) => {
-    // Check for PayPal-specific return parameters
-    const hasPaymentId = params.get("paymentId");
-    const hasToken = params.get("token");
-    const hasPayerId = params.get("PayerID");
-    const hasInvoiceId = params.get("invoiceId");
-    
-    // At least one PayPal parameter should be present
-    return !!(hasPaymentId || hasToken || hasPayerId || hasInvoiceId);
-  };
-
+  // Handle PayPal payment click
   useEffect(() => {
-    // Handle return from PayPal (check for PayPal redirect parameters)
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    if (isValidPayPalReturn(urlParams)) {
-      // Generate secure access token
-      const accessToken = generateAccessToken();
-      const item = urlParams.get("item") || localStorage.getItem("insider_item") || "insider";
-      
-      // Store payment verification data
-      const paymentData = {
-        token: accessToken,
-        item: item,
-        timestamp: Date.now(),
-        verified: true,
-        // Store for 30 days
-        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
-      };
-      
-      localStorage.setItem("insider_access_token", accessToken);
-      localStorage.setItem("insider_payment_data", JSON.stringify(paymentData));
-      localStorage.setItem("insider_item", item);
-      localStorage.removeItem("paypal_payment_started");
-      
-      // Redirect to thank-you page with secure token
-      window.location.href = `${thankYouUrl}?token=${accessToken}&item=${encodeURIComponent(item)}`;
-      return;
-    }
-
-    // Try to add return URL (may work depending on PayPal invoice settings)
-    const returnUrl = encodeURIComponent(thankYouUrl);
-
     const buttons = document.querySelectorAll(".purchase-btn");
     const listeners = [];
+
     buttons.forEach((btn) => {
       const handlePaymentClick = (e) => {
         try {
           const item = btn.getAttribute("data-item") || "insider";
           
-          // Generate transaction ID for tracking
           const transactionId = `insider_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
           
-          // Store payment intent securely
           const paymentIntent = {
             item: item,
             transactionId: transactionId,
@@ -109,11 +34,10 @@ const InsiderTips = ({ theme }) => {
           localStorage.setItem("insider_item", item);
           localStorage.setItem("insider_payment_intent", JSON.stringify(paymentIntent));
           
-          // Build PayPal link with proper parameters
+          const returnUrl = encodeURIComponent(thankYouUrl);
           const linkBase = paypalInvoiceLink + (paypalInvoiceLink.includes("?") ? "&" : "?");
           const paypalLink = `${linkBase}return=${returnUrl}&item=${encodeURIComponent(item)}&custom=${encodeURIComponent(transactionId)}`;
           
-          // Rate limiting: prevent rapid clicks
           const lastClick = localStorage.getItem("last_payment_click");
           if (lastClick && Date.now() - parseInt(lastClick) < 2000) {
             console.warn("Payment click rate limited");
@@ -137,7 +61,29 @@ const InsiderTips = ({ theme }) => {
         btn.removeEventListener("click", handlePaymentClick)
       );
     };
-  }, [thankYouUrl, paypalInvoiceLink]);
+  }, [paypalInvoiceLink, thankYouUrl]);
+
+  // Apply coupon
+  const applyCoupon = () => {
+    const code = (coupon || '').trim().toUpperCase();
+    if (code === 'TOIBIGAY') {
+      setCouponMsg('Coupon applied. Redirecting...');
+      const token = btoa('coupon-' + Date.now()).replace(/=+$/, '');
+      const paymentData = {
+        token,
+        item: 'insider',
+        timestamp: Date.now(),
+        verified: true,
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('insider_access_token', token);
+      localStorage.setItem('insider_payment_data', JSON.stringify(paymentData));
+      localStorage.setItem('insider_item', 'insider');
+      window.location.href = `${thankYouUrl}?token=${encodeURIComponent(token)}&item=insider`;
+    } else {
+      setCouponMsg('Invalid coupon');
+    }
+  };
 
   const bgStyle = isMorning
     ? "bg-gradient-to-b from-[#fdfcfb] to-[#e2d1c3]"
@@ -149,9 +95,7 @@ const InsiderTips = ({ theme }) => {
   const brandColor = isMorning ? "from-[#2d5016] to-[#3a7d2f]" : "from-[#4f46e5] to-[#06b6d4]";
 
   return (
-    <section
-      className={`min-h-screen py-8 sm:py-12 px-4 sm:px-6 md:px-16 transition-all duration-700 ${bgStyle}`}
-    >
+    <section className={`min-h-screen py-8 sm:py-12 px-4 sm:px-6 md:px-16 transition-all duration-700 ${bgStyle}`}>
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <header className="flex items-center justify-between mb-8">
@@ -164,90 +108,100 @@ const InsiderTips = ({ theme }) => {
           <div>
             <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight ${textColor}`}>
               Unlock Saigon Insider Tips for{" "}
-              <span className={`${textColor}`}>$1.99</span>
+              <span className={`${textColor}`}>$4.99</span>
             </h1>
             <p className={`text-base sm:text-lg mb-6 ${mutedColor}`}>
               A no-fluff cheat sheet for first-timers and frequent flyers: avoid tourist traps,
               move smarter, and eat like a local.
             </p>
 
-            {/* Bullets removed per request */}
-
-            {/* Product Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-              {products.map((p) => (
-                <div
-                  key={p.name}
-                  className={`${cardBgSecondary} rounded-xl p-5 flex flex-col justify-between h-full border border-white/10 hover:border-white/30 transition-all hover:shadow-lg`}
-                >
-                  <div className="space-y-3">
-                    {/* Badge */}
-                    <div className="flex items-start justify-between">
-                      <span className={`text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${
-                        isMorning 
-                          ? "bg-[#2d5016]/10 text-[#2d5016] border border-[#2d5016]/20" 
-                          : "bg-[#4f46e5]/20 text-[#4cc9f0] border border-[#4cc9f0]/30"
-                      }`}>
-                        {p.badge}
-                      </span>
-                    </div>
-                    
-                    {/* Title */}
-                    <div>
-                      <h3 className={`text-lg font-bold ${textColor} mb-2`}>{p.title}</h3>
-                      <p className={`text-xs sm:text-sm leading-relaxed ${mutedColor} mb-3`}>
-                        {p.description}
-                      </p>
-                    </div>
-
-                    {/* Trust indicators */}
-                    <div className="flex items-center gap-3 text-xs">
-                      <span className={`${mutedColor} flex items-center gap-1`}>
-                        <span>✓</span>
-                        <span>Instant access</span>
-                      </span>
-                      <span className={`${mutedColor} flex items-center gap-1`}>
-                        <span>✓</span>
-                        <span>Updated regularly</span>
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* CTA Button */}
-                  <div className="pt-4 mt-2">
-                    <a
-                      href={paypalInvoiceLink}
-                      target="_blank"
-                      rel="noopener"
-                      data-item={p.name}
-                      className={`purchase-btn inline-flex items-center justify-center w-full gap-2 px-4 py-3 rounded-lg font-bold bg-gradient-to-r ${brandColor} text-white shadow-md hover:shadow-xl hover:opacity-90 hover:scale-[1.02] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                        isMorning ? "focus-visible:ring-[#2d5016]" : "focus-visible:ring-[#4cc9f0]"
-                      }`}
-                    >
-                      Unlock for ${p.price.toFixed(2)}
-                    </a>
-                    <p className={`text-[10px] text-center mt-2 ${mutedColor}`}>
-                      One-time purchase • Lifetime access
-                    </p>
+            {/* Product Card */}
+            <div className={`${cardBgSecondary} rounded-xl p-5 flex flex-col justify-between h-full border border-white/10 hover:border-white/30 transition-all hover:shadow-lg mb-4`}>
+              <div className="space-y-3">
+                {/* Badge */}
+                <div className="flex items-start justify-between">
+                  <span className={`text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${
+                    isMorning 
+                      ? "bg-[#2d5016]/10 text-[#2d5016] border border-[#2d5016]/20" 
+                      : "bg-[#4f46e5]/20 text-[#4cc9f0] border border-[#4cc9f0]/30"
+                  }`}>
+                    Limited Promo
+                  </span>
+                </div>
+                
+                {/* Title */}
+                <div>
+                  <h3 className={`text-lg font-bold ${textColor} mb-2`}>Ultimate Saigon Insider Guide</h3>
+                  <p className={`text-xs sm:text-sm leading-relaxed ${mutedColor} mb-3`}>
+                    Skip tourist traps, save money, and move like a local. Hand‑picked spots, scripts that work, and late‑night lifesavers.
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className={`text-sm line-through opacity-60 ${mutedColor}`}>$9.99</span>
+                    <span className="text-lg font-extrabold text-emerald-400">$4.99</span>
                   </div>
                 </div>
-              ))}
+
+                {/* Trust indicators */}
+                <div className="flex items-center gap-3 text-xs">
+                  <span className={`${mutedColor} flex items-center gap-1`}>
+                    <span>✓</span>
+                    <span>Instant access</span>
+                  </span>
+                  <span className={`${mutedColor} flex items-center gap-1`}>
+                    <span>✓</span>
+                    <span>Updated regularly</span>
+                  </span>
+                </div>
+              </div>
+              
+              {/* CTA Button */}
+              <div className="pt-4 mt-2">
+                <a
+                  href={paypalInvoiceLink}
+                  target="_blank"
+                  rel="noopener"
+                  data-item="insider"
+                  className={`purchase-btn inline-flex items-center justify-center w-full gap-2 px-4 py-3 rounded-lg font-bold bg-gradient-to-r ${brandColor} text-white shadow-md hover:shadow-xl hover:opacity-90 hover:scale-[1.02] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                    isMorning ? "focus-visible:ring-[#2d5016]" : "focus-visible:ring-[#4cc9f0]"
+                  }`}
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.203c-.076.47-.497.82-.974.82Z"/>
+                  </svg>
+                  Pay with PayPal - $4.99
+                </a>
+                <p className={`text-[10px] text-center mt-2 ${mutedColor}`}>
+                  One-time purchase • Lifetime access • Promo ends soon
+                </p>
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 mb-4">
-              <Link
-                to="/reviews"
-                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold ${cardBgSecondary} ${textColor} border border-white/10 hover:opacity-80 transition-all`}
+            {/* Coupon */}
+            <div className="flex items-center gap-2 mb-4">
+              <input
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+                placeholder="Enter coupon code"
+                className={`px-3 py-2 rounded-lg border ${isMorning ? 'border-gray-300 bg-white text-black' : 'border-white/20 bg-[#0f1218] text-white'} outline-none flex-1`}
+              />
+              <button
+                onClick={applyCoupon}
+                className={`px-4 py-2 rounded-lg font-semibold bg-gradient-to-r ${brandColor} text-white`}
               >
-                See all reviews
-              </Link>
+                Apply Coupon
+              </button>
             </div>
+            {couponMsg && (
+              <p className={`text-sm mb-4 ${couponMsg.includes('Invalid') ? 'text-red-400' : mutedColor}`}>
+                {couponMsg}
+              </p>
+            )}
 
             <p className={`text-xs sm:text-sm ${mutedColor}`}>
-              Each file is <span className="font-semibold">$1.99</span>. After payment, you'll be redirected to your insider tips.{" "}
-              <Link to="/insider/thank-you" className="underline hover:opacity-70">
+              Each file is <span className="font-semibold">$4.99</span>. After payment, you'll be redirected to your insider tips.{" "}
+              <a href={thankYouUrl} className="underline hover:opacity-70">
                 Or click here if you've already paid
-              </Link>
+              </a>
               .
             </p>
           </div>
@@ -257,7 +211,7 @@ const InsiderTips = ({ theme }) => {
             {/* Teasers */}
             <div className="space-y-3">
               <div className={`${cardBgSecondary} rounded-xl p-4`}>
-                <div className={`text-xs mb-2 ${mutedColor}`}>Sneak peek: Night Market Map</div>
+                <div className={`text-xs mb-2 ${mutedColor}`}>Sneak peek: Food Stops with Maps</div>
                 <div
                   className="h-36 rounded-lg opacity-60"
                   style={{
@@ -269,7 +223,7 @@ const InsiderTips = ({ theme }) => {
               </div>
               <div className={`${cardBgSecondary} rounded-xl p-4`}>
                 <div className={`text-xs mb-2 ${mutedColor}`}>
-                  Sneak peek: Taxi Script for Refusing Detours
+                  Sneak peek: Insider Tips & Tricks
                 </div>
                 <div
                   className="h-24 rounded-lg opacity-60"
@@ -307,7 +261,7 @@ const InsiderTips = ({ theme }) => {
                 />
                 <div>
                   <div className={`font-semibold text-sm ${textColor}`}>
-                    "The late-night pho list is gold."
+                    "The food stops list is gold."
                   </div>
                   <div className={`text-xs ${mutedColor}`}>Ben • Foodie</div>
                 </div>
@@ -321,10 +275,9 @@ const InsiderTips = ({ theme }) => {
           <h3 className={`text-xl font-bold mb-6 ${textColor}`}>FAQ</h3>
           <div className="space-y-4">
             <div>
-              <strong className={textColor}>Why $1.99?</strong>
+              <strong className={textColor}>Why $4.99?</strong>
               <p className={`text-sm mt-1 ${mutedColor}`}>
-                It keeps the list high-signal and supports updates. It's a tripwire price—small ask,
-                big value.
+                It keeps the list high-signal and supports updates. Still a small ask for big value.
               </p>
             </div>
             <div>
@@ -342,15 +295,9 @@ const InsiderTips = ({ theme }) => {
             </div>
           </div>
         </section>
-
-        {/* Footer note */}
-        <footer className={`text-xs sm:text-sm text-center ${mutedColor} mt-8 pt-6 border-t border-white/10`}>
-          Tip: Add a small link in your home hero, testimonials, tours pages, and footer.
-        </footer>
       </div>
     </section>
   );
 };
 
 export default InsiderTips;
-

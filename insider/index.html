@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/images/night-logo.png" />
   <title>Saigonese Hang-out</title>
-  <meta name="description" content="Hidden cafes, scams to avoid, best Grab routes, late-night eats, and a safety checklist. Unlock Saigon insider tips for just $1.99." />
+  <meta name="description" content="Hidden cafes, scams to avoid, best Grab routes, late-night eats, and a safety checklist. Unlock Saigon insider tips for just $4.99." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@
 
     <section class="hero">
       <div>
-        <h1 class="headline">Unlock Saigon Insider Tips for <span class="price">$1.99</span></h1>
+        <h1 class="headline">Unlock Saigon Insider Tips for <span class="price">$4.99</span></h1>
         <p class="sub">A no-fluff cheat sheet for first-timers and frequent flyers: avoid tourist traps, move smarter, and eat like a local.</p>
         <ul class="bullets">
           <li>Hidden cafes and neighborhoods locals actually love</li>
@@ -61,8 +61,14 @@
           <li>Carry-on safety checklist and what to leave at home</li>
         </ul>
         <div class="cta-row">
-          <a class="btn" id="primary-cta" href="https://www.paypal.com/invoice/p/#SX5BJMNA6ETYBN7P" target="_blank" rel="noopener">Unlock with PayPal — $1.99</a>
+          <a class="btn" id="primary-cta" href="https://www.paypal.com/ncp/payment/EC5ZGXT2TUN4L" target="_blank" rel="noopener">Unlock with PayPal — $4.99</a>
+          <a class="btn" id="stripe-cta" href="https://buy.stripe.com/test_XXXXXXXXXXXXXXXXXX" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#635bff,#00d4ff); box-shadow:0 8px 24px rgba(99,91,255,0.35);">Unlock with Stripe — $4.99</a>
           <a class="btn secondary" href="#testimonials">See all reviews</a>
+        </div>
+        <div class="cta-row" style="margin-top:10px">
+          <input id="coupon-input" placeholder="Enter coupon code" style="padding:10px 12px;border:1px solid #2b3240;border-radius:10px;background:#0f1218;color:white;outline:none;min-width:220px" />
+          <button id="apply-coupon" class="btn secondary" type="button">Apply Coupon</button>
+          <span id="coupon-msg" class="caption" style="margin-left:6px"></span>
         </div>
         <p class="caption">After payment, you'll be redirected to your insider tips. <a href="/insider/thank-you" style="color:var(--brand-2); text-decoration:underline;">Or click here if you've already paid</a>.</p>
       </div>
@@ -99,8 +105,8 @@
     <section class="faq">
       <h3>FAQ</h3>
       <div class="qa">
-        <strong>Why $1.99?</strong>
-        <div class="caption">It keeps the list high-signal and supports updates. It’s a tripwire price—small ask, big value.</div>
+        <strong>Why $4.99?</strong>
+        <div class="caption">It keeps the list high-signal and supports updates. Still a small ask for big value.</div>
       </div>
       <div class="qa">
         <strong>How do I get access?</strong>
@@ -120,16 +126,36 @@
   <script>
     // PayPal Invoice link with return URL
     // Note: PayPal invoices may not support return URLs, so we also provide a manual link
-    const PAYPAL_INVOICE_LINK = 'https://www.paypal.com/invoice/p/#SX5BJMNA6ETYBN7P';
+    let PAYPAL_INVOICE_LINK = 'https://www.paypal.com/ncp/payment/EC5ZGXT2TUN4L';
     const THANK_YOU_URL = window.location.origin + '/insider/thank-you';
+    // Stripe Payment Link (replace with your real link from Stripe dashboard)
+    const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/test_XXXXXXXXXXXXXXXXXX';
     
     // Try to add return URL (may work depending on PayPal invoice settings)
     const returnUrl = encodeURIComponent(THANK_YOU_URL);
+    // In local dev, bypass payment and go straight to thank-you page
+    const host = window.location.hostname || '';
+    const port = window.location.port || '';
+    const isLocalhost = (
+      host === 'localhost' ||
+      host === '127.0.0.1' ||
+      host === '0.0.0.0' ||
+      host === '::1' ||
+      host.endsWith('.local') ||
+      port === '5173'
+    );
+    if (isLocalhost) {
+      PAYPAL_INVOICE_LINK = '/insider/thank-you';
+    }
     const paypalLink = PAYPAL_INVOICE_LINK + (PAYPAL_INVOICE_LINK.includes('?') ? '&' : '?') + 'return=' + returnUrl;
     
     const primaryCta = document.getElementById('primary-cta');
+    const stripeCta = document.getElementById('stripe-cta');
     if (primaryCta) {
       primaryCta.href = paypalLink;
+      if (isLocalhost) {
+        primaryCta.textContent = 'Open Insider (Local Dev)';
+      }
       
       // Handle return from PayPal (check for PayPal redirect parameters)
       const urlParams = new URLSearchParams(window.location.search);
@@ -142,6 +168,54 @@
     // Optional: Store payment intent in localStorage to track state
     primaryCta?.addEventListener('click', () => {
       localStorage.setItem('paypal_payment_started', 'true');
+    });
+
+    // Stripe: direct Payment Link (no backend). Redirect after success is configured in Stripe.
+    if (stripeCta) {
+      stripeCta.addEventListener('click', async (e) => {
+        localStorage.setItem('stripe_payment_started', 'true');
+        try {
+          const resp = await fetch('/api/create-checkout-session', { method: 'POST' });
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data?.url) {
+              window.location.href = data.url;
+              return;
+            }
+          }
+        } catch {}
+        // Fallback to Payment Link if API not available
+        window.location.href = STRIPE_PAYMENT_LINK;
+        e.preventDefault();
+      });
+    }
+
+    // Coupon unlock (TOIBIGAY)
+    const couponInput = document.getElementById('coupon-input');
+    const couponBtn = document.getElementById('apply-coupon');
+    const couponMsg = document.getElementById('coupon-msg');
+    const grantAccess = () => {
+      const token = btoa('coupon-' + Date.now()).replace(/=+$/, '');
+      const paymentData = {
+        token,
+        item: 'insider',
+        timestamp: Date.now(),
+        verified: true,
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('insider_access_token', token);
+      localStorage.setItem('insider_payment_data', JSON.stringify(paymentData));
+      localStorage.setItem('insider_item', 'insider');
+      window.location.href = `${THANK_YOU_URL}?token=${encodeURIComponent(token)}&item=insider`;
+    };
+    couponBtn?.addEventListener('click', () => {
+      const code = (couponInput?.value || '').trim().toUpperCase();
+      if (code === 'TOIBIGAY') {
+        couponMsg.textContent = 'Coupon applied. Redirecting...';
+        grantAccess();
+      } else {
+        couponMsg.textContent = 'Invalid coupon';
+      }
     });
   </script>
 </body>
