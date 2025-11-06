@@ -1,6 +1,74 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
+// Image Carousel Component with Auto-scroll
+const ImageCarousel = ({ images, name }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+
+    // Auto-scroll every 3 seconds
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [images.length]);
+
+  const handleImageError = (e) => {
+    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";
+  };
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div className="relative w-full h-48 overflow-hidden">
+      <div 
+        className="flex transition-transform duration-500 ease-in-out h-full"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {images.map((img, index) => (
+          <img
+            key={index}
+            src={img}
+            alt={`${name} - Image ${index + 1}`}
+            className="w-full h-48 object-cover flex-shrink-0"
+            onError={handleImageError}
+          />
+        ))}
+      </div>
+      {images.length > 1 && (
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setCurrentIndex(index);
+                if (intervalRef.current) {
+                  clearInterval(intervalRef.current);
+                }
+                intervalRef.current = setInterval(() => {
+                  setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+                }, 3000);
+              }}
+              className={`w-2 h-2 rounded-full transition-all ${
+                index === currentIndex ? 'bg-white' : 'bg-white/50'
+              }`}
+              aria-label={`Go to image ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const InsiderTipsThankYou = ({ theme }) => {
   const isMorning = theme === "morning";
   const tipsRef = useRef(null);
@@ -10,6 +78,7 @@ const InsiderTipsThankYou = ({ theme }) => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeFoodCategory, setActiveFoodCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Generate secure access token
   const generateAccessToken = () => {
@@ -169,40 +238,44 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=C%C6%A1m%20t%E1%BA%A5m%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB+Qu%E1%BA%ADn%201+Saigon",
       rating: 4.5,
-      tags: ["broken","budget"]
+      tags: ["broken","budget"],
+      image: "/images/insider/food/food-1-com-tam.jpeg"
     },
     {
       id: 2,
       name: "A Tùng Bánh mì bò nướng bơ Campuchia",
       category: "street-food",
-      description: "Special Version of Banh Mi - Open: 12PM–10:30 PM",
+      description: "Special Version of Banh Mi - Open: 12PM–10:30 PM",
       price: "30,000 VND",
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=A%20T%C3%B9ng%20B%C3%A1nh%20m%C3%AC%20b%C3%B2%20n%C6%B0%E1%BB%9Bng%20b%C6%A1%20Campuchia+Qu%E1%BA%ADn%201+Saigon",
       rating: 4.9,
-      tags: ["special","budget"]
+      tags: ["special","budget"],
+      image: "/images/insider/street-food/food-2-banh-mi.jpeg"
     },
     {
       id: 3,
       name: "Bún thịt nướng Kiều Bảo",
       category: "restaurant",
-      description: "Grilled Pork and Rice Vermicelli  - Open: 11 AM–9 PM",
+      description: "Grilled Pork and Rice Vermicelli  - Open: 11 AM–9 PM",
       price: "35,000 VND",
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%BAn%20th%E1%BB%8Bt%20n%C6%B0%E1%BB%9Bng%20Ki%E1%BB%81u%20B%E1%BA%A3o+Qu%E1%BA%ADn%201+Saigon",
       rating: 4.8,
-      tags: ["grilled","budget"]
+      tags: ["grilled","budget"],
+      image: "/images/insider/food/food-3-bun-thit-nuong.jpeg"
     },
     {
       id: 4,
       name: "Bánh Xèo 46A",
       category: "restaurant",
-      description: "Sizzling Cake - Open: 10AM–1:30PM\n4PM–8:50 PM",
+      description: "Sizzling Cake - Open: 10AM–1:30PM\n4PM–8:50 PM",
       price: "100,000 VND",
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20X%C3%A8o%2046A+Qu%E1%BA%ADn%201+Saigon",
       rating: 4.5,
-      tags: ["sizzling","budget"]
+      tags: ["sizzling","budget"],
+      image: "/images/insider/food/food-4-banh-xeo.jpeg"
     },
     {
       id: 5,
@@ -213,18 +286,20 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20M%C3%AC%20Huynh%20Hoa+Qu%E1%BA%ADn%201+Saigon",
       rating: 4.7,
-      tags: ["banh","budget"]
+      tags: ["banh","budget"],
+      image: "/images/insider/street-food/food-5-banh-mi-huynh-hoa.jpeg"
     },
     {
       id: 6,
       name: "Phở",
       category: "restaurant",
-      description: "Pho - Open: 6 AM–12 PM",
+      description: "Pho - Open: 6 AM–12 PM",
       price: "70 - 90,000 VND",
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=Ph%E1%BB%9F+Qu%E1%BA%ADn%201+Saigon",
       rating: 4.5,
-      tags: ["pho","budget"]
+      tags: ["pho","budget"],
+      image: "/images/insider/food/food-6-pho.jpeg"
     },
     {
       id: 7,
@@ -235,40 +310,44 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 3, Saigon",
       mapLink: "https://maps.google.com/?q=Bun%20Bo%20Hue%20Huong%20Giang+Qu%E1%BA%ADn%203+Saigon",
       rating: 4.9,
-      tags: ["spicy","budget"]
+      tags: ["spicy","budget"],
+      image: "/images/insider/food/food-7-bun-bo-hue.jpeg"
     },
     {
       id: 8,
       name: "Chuối Nếp Nướng Võ Văn Tần",
       category: "restaurant",
-      description: "Grilled Banana Wrapped in \nSticky Rice - Open: 7 AM–9:30 PM",
+      description: "Grilled Banana Wrapped in \nSticky Rice - Open: 7 AM–9:30 PM",
       price: "25,000 VND/dish",
       location: "District 3, Saigon",
       mapLink: "https://maps.google.com/?q=Chu%E1%BB%91i%20N%E1%BA%BFp%20N%C6%B0%E1%BB%9Bng%20V%C3%B5%20V%C4%83n%20T%E1%BA%A7n+Qu%E1%BA%ADn%203+Saigon",
       rating: 4.5,
-      tags: ["grilled","budget"]
+      tags: ["grilled","budget"],
+      image: "/images/insider/food/food-8-chuoi-nep-nuong.jpeg"
     },
     {
       id: 9,
       name: "Bánh Mì Chảo Calmette",
       category: "street-food",
-      description: "Another Special Version of Banh Mi - Open: 9 AM–5 PM",
+      description: "Another Special Version of Banh Mi - Open: 9 AM–5 PM",
       price: "50,000 VND",
       location: "District 4, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20M%C3%AC%20Ch%E1%BA%A3o%20Calmette+Qu%E1%BA%ADn%204+Saigon",
       rating: 4.5,
-      tags: ["another","budget"]
+      tags: ["another","budget"],
+      image: "/images/insider/street-food/food-9-banh-mi-chao-calmette.jpeg"
     },
     {
       id: 10,
       name: "Phố Ẩm Thực - Vĩnh Khánh\n\"Vinh Khanh Food Street\"",
       category: "restaurant",
-      description: "Drinking and eating ! - Open: 6 AM–9 PM",
+      description: "Drinking and eating ! - Open: 6 AM–9 PM",
       price: "Varies",
       location: "District 4, Saigon",
       mapLink: "https://maps.google.com/?q=Ph%E1%BB%91%20%E1%BA%A8m%20Th%E1%BB%B1c%20-%20V%C4%A9nh%20Kh%C3%A1nh%0A%22Vinh%20Khanh%20Food%20Street%22+Qu%E1%BA%ADn%204+Saigon",
       rating: 4.7,
-      tags: ["drinking","budget"]
+      tags: ["drinking","budget"],
+      image: "/images/insider/food/food-10-vinh-khanh-food-street.jpeg"
     },
     {
       id: 11,
@@ -279,62 +358,56 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 10, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%B2%20N%C6%B0%E1%BB%9Bng%20L%E1%BB%A5i%20S%E1%BA%A3+Qu%E1%BA%ADn%2010+Saigon",
       rating: 4.5,
-      tags: ["grilled","budget"]
+      tags: ["grilled","budget"],
+      image: "/images/insider/food/food-11-bo-nuong-lui-sa.jpeg"
     },
     {
       id: 12,
       name: "Chè",
       category: "restaurant",
-      description: "Hot Sweet Soup - Open: 3PM–11 PM",
+      description: "Hot Sweet Soup - Open: 3PM–11 PM",
       price: "10,000 VND/portion",
       location: "District 10, Saigon",
       mapLink: "https://maps.google.com/?q=Ch%C3%A8+Qu%E1%BA%ADn%2010+Saigon",
       rating: 4.9,
-      tags: ["hot","budget"]
+      tags: ["hot","budget"],
+      image: "/images/insider/food/food-12-che.jpeg"
     },
     {
       id: 13,
       name: "Hồ Thị Kỷ \n\"Ho Thi Ky Street Food Market\"",
       category: "restaurant",
-      description: "If you're a foodie, this is a heaven for u! - Open: 5–10 PM",
+      description: "If you're a foodie, this is a heaven for u! - Open: 5–10 PM",
       price: "Varies",
       location: "District 10, Saigon",
       mapLink: "https://maps.google.com/?q=H%E1%BB%93%20Th%E1%BB%8B%20K%E1%BB%B7%20%0A%22Ho%20Thi%20Ky%20Street%20Food%20Market%22+Qu%E1%BA%ADn%2010+Saigon",
       rating: 4.9,
-      tags: ["if","budget"]
-    },
-    {
-      id: 14,
-      name: "Kem Dừa",
-      category: "restaurant",
-      description: "Coconut Ice Cream - Open: 5PM-11PM",
-      price: "25,000 VND",
-      location: "District 10, Saigon",
-      mapLink: "https://maps.google.com/?q=Kem%20D%E1%BB%ABa%20+Qu%E1%BA%ADn%2010+Saigon",
-      rating: 4.9,
-      tags: ["coconut","budget"]
+      tags: ["if","budget"],
+      image: "/images/insider/food/food-13-ho-thi-ky-market.webp"
     },
     {
       id: 15,
       name: "Bò Lá Lốt, Mỡ Chài",
       category: "restaurant",
-      description: " Grilled Beef wrapped in leaves  - Open: 7 AM–9 PM",
+      description: " Grilled Beef wrapped in leaves  - Open: 7 AM–9 PM",
       price: "50,000 VND",
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%B2%20L%C3%A1%20L%E1%BB%91t%2C%20M%E1%BB%A1%20Ch%C3%A0i+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.8,
-      tags: ["","budget"]
+      tags: ["","budget"],
+      image: "/images/insider/food/food-15-bo-la-lot-mo-chai.webp"
     },
     {
       id: 16,
       name: "Bánh Canh Cua",
       category: "restaurant",
-      description: "Crab Noodle Soup - Open: 6 AM–10 PM",
+      description: "Crab Noodle Soup - Open: 6 AM–10 PM",
       price: "40,000 VND",
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20Canh%20Cua+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.8,
-      tags: ["crab","budget"]
+      tags: ["crab","budget"],
+      image: "/images/insider/food/food-16-banh-canh-cua.jpeg"
     },
     {
       id: 17,
@@ -345,7 +418,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=Ram%20Qu%E1%BA%A3ng%20Ngon+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.9,
-      tags: ["budget"]
+      tags: ["budget"],
+      image: "/images/insider/food/food-17-ram-quang-ngon.jpeg"
     },
     {
       id: 18,
@@ -356,7 +430,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20%C6%AF%E1%BB%9Bt%20Ban%20M%C3%AA+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.7,
-      tags: ["budget"]
+      tags: ["budget"],
+      image: "/images/insider/food/food-18-banh-uot-ban-me.jpeg"
     },
     {
       id: 19,
@@ -367,7 +442,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20M%E1%BB%B3%20X%C3%ADu%20M%E1%BA%A1i%20Ch%C3%A9n+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.8,
-      tags: ["budget"]
+      tags: ["budget"],
+      image: "/images/insider/food/food-19-banh-my-xiu-mai-chen.jpeg"
     },
     {
       id: 20,
@@ -378,7 +454,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=G%C3%A0%20N%C6%B0%E1%BB%9Bng%20%2B%20Th%E1%BB%8Bt%20N%C6%B0%E1%BB%9Bng%20C%C6%A1m%20Lam+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.9,
-      tags: ["budget"]
+      tags: ["budget"],
+      image: "/images/insider/food/food-20-ga-nuong-thit-nuong-com-lam.jpeg"
     },
     {
       id: 21,
@@ -389,7 +466,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=Qu%C3%A1n%20Thu%E1%BB%B3%20Linh+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.8,
-      tags: ["budget"]
+      tags: ["budget"],
+      image: "/images/insider/food/food-21-quan-thuy-linh.jpg"
     },
     {
       id: 22,
@@ -400,7 +478,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Bình Thạnh, Saigon",
       mapLink: "https://maps.google.com/?q=B%C3%A1nh%20Flan%20B%C3%ACnh%20Thu%E1%BA%ADn+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
       rating: 4.6,
-      tags: ["budget"]
+      tags: ["budget"],
+      image: "/images/insider/food/food-22-banh-flan-binh-thuan.jpeg"
     },
     {
       id: 23,
@@ -411,95 +490,68 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "Tân Bình, Saigon",
       mapLink: "https://maps.google.com/?q=C%C6%A1m%20T%E1%BA%A5m%20Ba%20Ghi%E1%BB%81n%20+T%C3%A2n%20B%C3%ACnh+Saigon",
       rating: 4.8,
-      tags: ["broken","budget"]
+      tags: ["broken","budget"],
+      image: "/images/insider/food/food-23-com-tam-ba-ghien.jpeg"
     },
     {
       id: 24,
       name: "Quán Chay 1 Nụ Cười",
       category: "vegetarian",
-      description: "Everything ! - Open: 7 AM–9 PM",
+      description: "Everything ! - Open: 7 AM–9 PM",
       price: "20 - 35,000 VND/dish",
       location: "Vegetarian Food, Saigon",
       mapLink: "https://maps.google.com/?q=Quán+Chay+1+Nụ+Cười+Saigon",
       rating: 4.8,
-      tags: ["everything","vegetarian","budget"]
+      tags: ["everything","vegetarian","budget"],
+      image: "/images/insider/vegetarian/food-1-quan-chay-1-nu-cuoi.jpg"
     },
     {
       id: 25,
       name: "Quán chay Sala",
       category: "vegetarian",
-      description: "Everything hahaa - Open: 6 AM–9:30 PM",
+      description: "Everything hahaa - Open: 6 AM–9:30 PM",
       price: "35 - 50,000 VND/dish",
       location: "Vegetarian Food, Saigon",
       mapLink: "https://maps.google.com/?q=Quán+chay+Sala+Saigon",
       rating: 4.8,
-      tags: ["everything","vegetarian","budget"]
+      tags: ["everything","vegetarian","budget"],
+      image: "/images/insider/vegetarian/food-2-quan-chay-sala.webp"
     },
     {
       id: 26,
       name: "Chay Garden - Vegetarian Restaurant & Coffee",
       category: "vegetarian",
-      description: "Still everything ! - Open: 10 AM–10 PM",
+      description: "Still everything ! - Open: 10 AM–10 PM",
       price: "80,000 VND  -  100,000 VND/dish",
       location: "Vegetarian Food, Saigon",
       mapLink: "https://maps.google.com/?q=Chay+Garden+Vegetarian+Restaurant+Coffee+Saigon",
       rating: 4.5,
-      tags: ["still","vegetarian","budget"]
+      tags: ["still","vegetarian","budget"],
+      image: "/images/insider/vegetarian/food-3-chay-garden.jpg"
     },
     {
       id: 27,
       name: "Quán Chay Nhà",
       category: "vegetarian",
-      description: "Family meal - Open: 11 AM–2:30 PM\n5–9 PM",
+      description: "Family meal - Open: 11 AM–2:30 PM\n5–9 PM",
       price: "50 - 70,000 VND/dish",
       location: "Vegetarian Food, Saigon",
       mapLink: "https://maps.google.com/?q=Quán+Chay+Nhà+Saigon",
       rating: 4.6,
-      tags: ["family","vegetarian","budget"]
+      tags: ["family","vegetarian","budget"],
+      image: "/images/insider/vegetarian/food-4-quan-chay-nha.jpg"
     },
     {
       id: 28,
       name: "Lẩu Chay & Coffee Nhà Hát",
       category: "vegetarian",
-      description: "Vegan Hot Pot  - Open: 10 AM–10 PM",
+      description: "Vegan Hot Pot  - Open: 10 AM–10 PM",
       price: "100,000 VND/person",
       location: "Vegetarian Food, Saigon",
       mapLink: "https://maps.google.com/?q=Lẩu+Chay+Coffee+Nhà+Hát+Saigon",
       rating: 4.8,
-      tags: ["vegan","vegetarian","budget"]
-    },
-    {
-      id: 29,
-      name: "Kem Dừa Bơ",
-      category: "vegetarian",
-      description: "Avocado & Coconut Ice Cream - Open: 5PM-11PM",
-      price: "30,000 VND",
-      location: "Vegetarian Food, Saigon",
-      mapLink: "https://maps.google.com/?q=Kem+Dừa+Bơ+Saigon",
-      rating: 4.7,
-      tags: ["avocado","vegetarian","budget"]
-    },
-    {
-      id: 30,
-      name: "Chuối Nếp Nướng Võ Văn Tần",
-      category: "vegetarian",
-      description: "Grilled Banana Wrapped in \nSticky Rice - Open: 7 AM–9:30 PM",
-      price: "25,000 VND/dish",
-      location: "Vegetarian Food, Saigon",
-      mapLink: "https://maps.google.com/?q=Chuối+Nếp+Nướng+Võ+Văn+Tần+Saigon",
-      rating: 4.6,
-      tags: ["grilled","vegetarian","budget"]
-    },
-    {
-      id: 31,
-      name: "Chè",
-      category: "vegetarian",
-      description: "Hot Sweet Soup - Open: 3PM–11 PM",
-      price: "10,000 VND/portion",
-      location: "Vegetarian Food, Saigon",
-      mapLink: "https://maps.google.com/?q=Chè+Saigon",
-      rating: 4.7,
-      tags: ["hot","vegetarian","budget"]
+      tags: ["vegan","vegetarian","budget"],
+      image: "/images/insider/vegetarian/food-5-lau-chay-coffee-nha-hat.jpeg"
     }
   ];
 
@@ -523,106 +575,387 @@ const InsiderTipsThankYou = ({ theme }) => {
     // TODO: Add more accommodation options
   ];
 
-  // Nightlife data - from Excel
+  // Nightlife data - from nightclub folders
   const nightlife = [
     {
       id: 1,
-      name: "Chợ Bình Tây",
+      name: "11_11 CLUB",
       category: "nightlife",
-      description: "WholeSale Market - Best for local shopping, avoid tourist prices.",
-      price: "Free entry",
-      location: "District 6, Saigon",
-      mapLink: "https://maps.google.com/?q=Chợ+Bình+Tây+District+6",
-      rating: 4.3,
-      tags: ["market", "shopping", "local"]
+      description: "Nightclub - High-energy dance club in Saigon.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=11_11+CLUB+District+1+Saigon",
+      rating: 4.5,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/11_11 CLUB/IMG_4332.jpg",
+      images: [
+        "/images/insider/nightclub/11_11 CLUB/IMG_4332.jpg",
+        "/images/insider/nightclub/11_11 CLUB/IMG_4333.jpg",
+        "/images/insider/nightclub/11_11 CLUB/IMG_4334.jpg",
+        "/images/insider/nightclub/11_11 CLUB/IMG_4335.jpg",
+        "/images/insider/nightclub/11_11 CLUB/IMG_4336.jpg"
+      ]
     },
     {
       id: 2,
-      name: "Chạng Vạng Rooftop",
+      name: "AFTERLOW",
       category: "nightlife",
-      description: "Riverside view, landmark 81, District 1. Beautiful views of Saigon.",
-      price: "150,000 - 300,000 VND",
-      location: "District 2, Saigon",
-      mapLink: "https://maps.google.com/?q=Chạng+Vạng+Rooftop+District+2",
-      rating: 4.6,
-      tags: ["rooftop", "drinks", "views"]
+      description: "Nightclub - Late night party spot.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=AFTERLOW+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "late-night"],
+      image: "/images/insider/nightclub/AFTERLOW/IMG_3949.PNG",
+      images: [
+        "/images/insider/nightclub/AFTERLOW/IMG_3949.PNG",
+        "/images/insider/nightclub/AFTERLOW/IMG_3950.PNG",
+        "/images/insider/nightclub/AFTERLOW/IMG_3951.PNG",
+        "/images/insider/nightclub/AFTERLOW/IMG_3952.PNG",
+        "/images/insider/nightclub/AFTERLOW/IMG_3953.PNG",
+        "/images/insider/nightclub/AFTERLOW/IMG_3954.PNG"
+      ]
     },
     {
       id: 3,
-      name: "Acoustic Bar - Ngô Thời Nhiệm",
-      category: "nightlife",
-      description: "Bar with karaoke - Great for singing and drinks with friends.",
-      price: "100,000 - 200,000 VND",
-      location: "District 3, Saigon",
-      mapLink: "https://maps.google.com/?q=Acoustic+Bar+Ngô+Thời+Nhiệm+District+3",
-      rating: 4.4,
-      tags: ["bar", "karaoke", "music"]
-    },
-    {
-      id: 4,
       name: "ATMOS CLUB",
       category: "nightlife",
       description: "CLUB - High-energy dance club, popular with locals and tourists.",
       price: "200,000 - 500,000 VND",
       location: "District 1, Saigon",
-      mapLink: "https://maps.google.com/?q=ATMOS+CLUB+District+1",
+      mapLink: "https://maps.google.com/?q=ATMOS+CLUB+District+1+Saigon",
       rating: 4.5,
-      tags: ["club", "dancing", "nightlife"]
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/ATMOS CLUB /IMG_4486.jpg",
+      images: [
+        "/images/insider/nightclub/ATMOS CLUB /IMG_4486.jpg",
+        "/images/insider/nightclub/ATMOS CLUB /JPEG image-4543-A96D-A4-3.jpeg",
+        "/images/insider/nightclub/ATMOS CLUB /JPEG image-4543-A96D-A4-4.jpeg",
+        "/images/insider/nightclub/ATMOS CLUB /JPEG image-4543-A96D-A4-5.jpeg",
+        "/images/insider/nightclub/ATMOS CLUB /JPEG image-485B-9466-7C-0.jpeg",
+        "/images/insider/nightclub/ATMOS CLUB /JPEG image-485B-9466-7C-1.jpeg",
+        "/images/insider/nightclub/ATMOS CLUB /JPEG image-485B-9466-7C-2.jpeg"
+      ]
+    },
+    {
+      id: 4,
+      name: "BAM",
+      category: "nightlife",
+      description: "Nightclub - Vibrant nightlife venue.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=BAM+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/BAM/IMG_2799.PNG",
+      images: [
+        "/images/insider/nightclub/BAM/IMG_2798.PNG",
+        "/images/insider/nightclub/BAM/IMG_2799.PNG",
+        "/images/insider/nightclub/BAM/IMG_2801.PNG",
+        "/images/insider/nightclub/BAM/IMG_2803.PNG",
+        "/images/insider/nightclub/BAM/IMG_2804.PNG",
+        "/images/insider/nightclub/BAM/IMG_2805.PNG"
+      ]
     },
     {
       id: 5,
-      name: "EMPIRE CLUB",
+      name: "BODEGA",
       category: "nightlife",
-      description: "CLUB - Late night party spot, open until 4 AM.",
+      description: "Nightclub - Popular party destination.",
       price: "200,000 - 500,000 VND",
       location: "District 1, Saigon",
-      mapLink: "https://maps.google.com/?q=EMPIRE+CLUB+District+1",
-      rating: 4.4,
-      tags: ["club", "dancing", "late-night"]
+      mapLink: "https://maps.google.com/?q=BODEGA+District+1+Saigon",
+      rating: 4.5,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/BODEGA/IMG_2781.PNG",
+      images: [
+        "/images/insider/nightclub/BODEGA/IMG_2781.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2782.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2784.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2785.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2786.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2787.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2788.PNG",
+        "/images/insider/nightclub/BODEGA/IMG_2790.PNG"
+      ]
     },
     {
       id: 6,
-      name: "Chill Skybar",
+      name: "BOUJEE SAIGON",
       category: "nightlife",
-      description: "Rooftop Bar - The bustling of Saigon from above. Great for sunset drinks.",
-      price: "150,000 - 300,000 VND",
+      description: "Nightclub - Upscale nightlife experience.",
+      price: "200,000 - 500,000 VND",
       location: "District 1, Saigon",
-      mapLink: "https://maps.google.com/?q=Chill+Skybar+District+1",
+      mapLink: "https://maps.google.com/?q=BOUJEE+SAIGON+District+1+Saigon",
       rating: 4.5,
-      tags: ["rooftop", "drinks", "views"]
+      tags: ["club", "dancing", "upscale"],
+      image: "/images/insider/nightclub/BOUJEE SAIGON/IMG_3936.PNG",
+      images: [
+        "/images/insider/nightclub/BOUJEE SAIGON/IMG_3936.PNG",
+        "/images/insider/nightclub/BOUJEE SAIGON/IMG_3937.PNG",
+        "/images/insider/nightclub/BOUJEE SAIGON/IMG_3939.PNG",
+        "/images/insider/nightclub/BOUJEE SAIGON/IMG_3940.PNG",
+        "/images/insider/nightclub/BOUJEE SAIGON/IMG_3941.PNG"
+      ]
     },
     {
       id: 7,
-      name: "Saigon Japan Town",
+      name: "BROMA",
       category: "nightlife",
-      description: "Red light Area lol! - Open 24 hours, unique area with Japanese restaurants and bars.",
-      price: "Varies",
+      description: "Nightclub - Trendy nightlife spot.",
+      price: "200,000 - 500,000 VND",
       location: "District 1, Saigon",
-      mapLink: "https://maps.google.com/?q=Saigon+Japan+Town+District+1",
-      rating: 4.2,
-      tags: ["bar", "restaurant", "24/7"]
+      mapLink: "https://maps.google.com/?q=BROMA+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/BROMA/IMG_3958.PNG",
+      images: [
+        "/images/insider/nightclub/BROMA/IMG_3955.PNG",
+        "/images/insider/nightclub/BROMA/IMG_3956.PNG",
+        "/images/insider/nightclub/BROMA/IMG_3957.PNG",
+        "/images/insider/nightclub/BROMA/IMG_3958.PNG",
+        "/images/insider/nightclub/BROMA/IMG_3959.PNG"
+      ]
     },
     {
       id: 8,
-      name: "Phố đi bộ Bùi Viện (Bui Vien Walking Street)",
+      name: "CANALIS CLUB",
       category: "nightlife",
-      description: "Loud music, boy&girl dancing, suitable for youngsters :D. Busy after 7PM.",
-      price: "50,000 - 200,000 VND",
+      description: "CLUB - Energetic dance club.",
+      price: "200,000 - 500,000 VND",
       location: "District 1, Saigon",
-      mapLink: "https://maps.google.com/?q=Bui+Vien+Walking+Street+District+1",
-      rating: 4.2,
-      tags: ["bar", "touristy", "lively"]
+      mapLink: "https://maps.google.com/?q=CANALIS+CLUB+District+1+Saigon",
+      rating: 4.5,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/CANALIS CLUB/IMG_4339.jpg",
+      images: [
+        "/images/insider/nightclub/CANALIS CLUB/IMG_4339.jpg",
+        "/images/insider/nightclub/CANALIS CLUB/IMG_4340.jpg"
+      ]
     },
     {
       id: 9,
-      name: "Diamond Plaza",
+      name: "FAHAM LOUNGE",
       category: "nightlife",
-      description: "Shopping Mall - Air-conditioned shopping center, great escape from heat.",
-      price: "Free entry",
+      description: "Lounge - Relaxed atmosphere for drinks and music.",
+      price: "150,000 - 300,000 VND",
       location: "District 1, Saigon",
-      mapLink: "https://maps.google.com/?q=Diamond+Plaza+District+1",
-      rating: 4.3,
-      tags: ["mall", "shopping", "air-conditioned"]
+      mapLink: "https://maps.google.com/?q=FAHAM+LOUNGE+District+1+Saigon",
+      rating: 4.4,
+      tags: ["lounge", "drinks", "chill"],
+      image: "/images/insider/nightclub/FAHAM LOUNGE /JPEG image-4F66-A5EE-F7-1.jpeg",
+      images: [
+        "/images/insider/nightclub/FAHAM LOUNGE /IMG_DDC0E8D64455-1.jpeg",
+        "/images/insider/nightclub/FAHAM LOUNGE /IMG_DDC0E8D64455-2.jpeg",
+        "/images/insider/nightclub/FAHAM LOUNGE /IMG_DDC0E8D64455-3.jpeg",
+        "/images/insider/nightclub/FAHAM LOUNGE /JPEG image-4F66-A5EE-F7-0.jpeg",
+        "/images/insider/nightclub/FAHAM LOUNGE /JPEG image-4F66-A5EE-F7-1.jpeg",
+        "/images/insider/nightclub/FAHAM LOUNGE /JPEG image-4F66-A5EE-F7-2.jpeg"
+      ]
+    },
+    {
+      id: 10,
+      name: "INDIGO",
+      category: "nightlife",
+      description: "Bar - Great for drinks and music with friends.",
+      price: "100,000 - 200,000 VND",
+      location: "District 3, Saigon",
+      mapLink: "https://maps.google.com/?q=INDIGO+District+3+Saigon",
+      rating: 4.4,
+      tags: ["bar", "music", "nightlife"],
+      image: "/images/insider/nightclub/INDIGO/IMG_4403.PNG",
+      images: [
+        "/images/insider/nightclub/INDIGO/IMG_3942.PNG",
+        "/images/insider/nightclub/INDIGO/IMG_3943.PNG",
+        "/images/insider/nightclub/INDIGO/IMG_3944.PNG",
+        "/images/insider/nightclub/INDIGO/IMG_3945.PNG",
+        "/images/insider/nightclub/INDIGO/IMG_3946.PNG",
+        "/images/insider/nightclub/INDIGO/IMG_3947.PNG",
+        "/images/insider/nightclub/INDIGO/IMG_3948.PNG"
+      ]
+    },
+    {
+      id: 11,
+      name: "KHU 13",
+      category: "nightlife",
+      description: "Nightclub - Popular nightlife destination.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=KHU+13+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/KHU 13/IMG_4348 2.jpg",
+      images: [
+        "/images/insider/nightclub/KHU 13/IMG_4348 2.jpg",
+        "/images/insider/nightclub/KHU 13/IMG_4349 2.jpg",
+        "/images/insider/nightclub/KHU 13/IMG_4350 3.jpg",
+        "/images/insider/nightclub/KHU 13/IMG_4351 3.jpg"
+      ]
+    },
+    {
+      id: 12,
+      name: "LOCO COMPLEX",
+      category: "nightlife",
+      description: "Complex - Multi-venue nightlife destination.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=LOCO+COMPLEX+District+1+Saigon",
+      rating: 4.5,
+      tags: ["complex", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/LOCO COMPLEX/IMG_4499.JPG",
+      images: [
+        "/images/insider/nightclub/LOCO COMPLEX/IMG_4495.JPG",
+        "/images/insider/nightclub/LOCO COMPLEX/IMG_4496.JPG",
+        "/images/insider/nightclub/LOCO COMPLEX/IMG_4497.JPG",
+        "/images/insider/nightclub/LOCO COMPLEX/IMG_4498.JPG",
+        "/images/insider/nightclub/LOCO COMPLEX/IMG_4499.JPG"
+      ]
+    },
+    {
+      id: 13,
+      name: "LOLLA",
+      category: "nightlife",
+      description: "Nightclub - Vibrant party atmosphere.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=LOLLA+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/LOLLA /IMG_4239.JPG",
+      images: [
+        "/images/insider/nightclub/LOLLA /IMG_5822.JPG",
+        "/images/insider/nightclub/LOLLA /IMG_5823.JPG",
+        "/images/insider/nightclub/LOLLA /IMG_5824.JPG",
+        "/images/insider/nightclub/LOLLA /IMG_5825.JPG"
+      ]
+    },
+    {
+      id: 14,
+      name: "LUSH SAIGON",
+      category: "nightlife",
+      description: "Nightclub - Upscale nightlife venue.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=LUSH+SAIGON+District+1+Saigon",
+      rating: 4.5,
+      tags: ["club", "dancing", "upscale"],
+      image: "/images/insider/nightclub/LUSH SAIGON/IMG_4352 3.jpg",
+      images: [
+        "/images/insider/nightclub/LUSH SAIGON/IMG_4352 3.jpg",
+        "/images/insider/nightclub/LUSH SAIGON/IMG_4353 3.jpg",
+        "/images/insider/nightclub/LUSH SAIGON/IMG_4354.jpg",
+        "/images/insider/nightclub/LUSH SAIGON/IMG_4355.jpg"
+      ]
+    },
+    {
+      id: 15,
+      name: "MEDIUM",
+      category: "nightlife",
+      description: "Nightclub - Popular nightlife spot.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=MEDIUM+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/MEDIUM /IMG_5769.jpg",
+      images: [
+        "/images/insider/nightclub/MEDIUM /IMG_5769.jpg"
+      ]
+    },
+    {
+      id: 16,
+      name: "MERLEY ISG",
+      category: "nightlife",
+      description: "Nightclub - Trendy nightlife venue.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=MERLEY+ISG+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "nightlife"],
+      image: "/images/insider/nightclub/MERLEY ISG /IMG_4383 2.jpg",
+      images: [
+        "/images/insider/nightclub/MERLEY ISG /IMG_4379 2.jpg",
+        "/images/insider/nightclub/MERLEY ISG /IMG_4380 2.jpg",
+        "/images/insider/nightclub/MERLEY ISG /IMG_4381 2.jpg",
+        "/images/insider/nightclub/MERLEY ISG /IMG_4382 2.jpg"
+      ]
+    },
+    {
+      id: 17,
+      name: "MIZUWARI",
+      category: "nightlife",
+      description: "Bar - Japanese-inspired bar with unique atmosphere.",
+      price: "150,000 - 300,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=MIZUWARI+District+1+Saigon",
+      rating: 4.5,
+      tags: ["bar", "japanese", "cocktails"],
+      image: "/images/insider/nightclub/MIZUWARI/IMG_4394 2.jpg",
+      images: [
+        "/images/insider/nightclub/MIZUWARI/IMG_4394 2.jpg",
+        "/images/insider/nightclub/MIZUWARI/IMG_4395 2.jpg",
+        "/images/insider/nightclub/MIZUWARI/IMG_4396 2.jpg",
+        "/images/insider/nightclub/MIZUWARI/IMG_4397 2.JPG"
+      ]
+    },
+    {
+      id: 18,
+      name: "NEIGHTBORHOOD",
+      category: "nightlife",
+      description: "Nightclub - Local favorite nightlife spot.",
+      price: "200,000 - 500,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=NEIGHTBORHOOD+District+1+Saigon",
+      rating: 4.4,
+      tags: ["club", "dancing", "local"],
+      image: "/images/insider/nightclub/NEIGHTBORHOOD/IMG_4356 4.jpg",
+      images: [
+        "/images/insider/nightclub/NEIGHTBORHOOD/IMG_4356 4.jpg",
+        "/images/insider/nightclub/NEIGHTBORHOOD/IMG_4357 4.jpg",
+        "/images/insider/nightclub/NEIGHTBORHOOD/IMG_4358 4.jpg",
+        "/images/insider/nightclub/NEIGHTBORHOOD/IMG_4359 4.jpg"
+      ]
+    },
+    {
+      id: 19,
+      name: "QUI",
+      category: "nightlife",
+      description: "Bar - Intimate bar setting for drinks.",
+      price: "150,000 - 300,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=QUI+District+1+Saigon",
+      rating: 4.4,
+      tags: ["bar", "drinks", "intimate"],
+      image: "/images/insider/nightclub/QUI/IMG_4379 2.jpg",
+      images: [
+        "/images/insider/nightclub/QUI/IMG_4383 2.jpg",
+        "/images/insider/nightclub/QUI/IMG_4384 2.jpg",
+        "/images/insider/nightclub/QUI/IMG_4385 2.jpg",
+        "/images/insider/nightclub/QUI/IMG_4386 2.jpg"
+      ]
+    },
+    {
+      id: 20,
+      name: "ZION SKY LOUNGE",
+      category: "nightlife",
+      description: "Rooftop Bar - Beautiful views of Saigon from above. Great for sunset drinks.",
+      price: "150,000 - 300,000 VND",
+      location: "District 1, Saigon",
+      mapLink: "https://maps.google.com/?q=ZION+SKY+LOUNGE+District+1+Saigon",
+      rating: 4.6,
+      tags: ["rooftop", "drinks", "views"],
+      image: "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4474.JPG",
+      images: [
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_1743.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_1746.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4468.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4469.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4470.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4472.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4474.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4475.JPG",
+        "/images/insider/nightclub/ZION SKY LOUNGE/IMG_4476.JPG"
+      ]
     }
   ];
 
@@ -637,7 +970,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 3, Saigon",
       mapLink: "https://maps.google.com/?q=War+Remnants+Museum+District+3",
       rating: 4.7,
-      tags: ["museum", "history", "war"]
+      tags: ["museum", "history", "war"],
+      image: "/images/insider/historical/bao-tang-chung-tich-chien-tranh.jpg" // War Remnants Museum
     },
     {
       id: 2,
@@ -648,7 +982,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=Independence+Palace+District+1",
       rating: 4.6,
-      tags: ["palace", "history", "architecture"]
+      tags: ["palace", "history", "architecture"],
+      image: "/images/insider/historical/dinh-doc-lap.jpg" // Independence Palace
     },
     {
       id: 3,
@@ -659,7 +994,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=Ho+Chi+Minh+City+Museum+of+Fine+Arts+District+1",
       rating: 4.5,
-      tags: ["museum", "art", "culture"]
+      tags: ["museum", "art", "culture"],
+      image: "/images/insider/historical/Bao-tang-My-thuat-Ho-Chi-Minh.jpg" // Fine Arts Museum
     },
     {
       id: 4,
@@ -670,7 +1006,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=History+Museum+Ho+Chi+Minh+City+District+1",
       rating: 4.4,
-      tags: ["museum", "history", "culture"]
+      tags: ["museum", "history", "culture"],
+      image: "/images/insider/historical/Bao-tang Lich su-ho-Chi-Minh.jpg" // History Museum
     },
     {
       id: 5,
@@ -681,7 +1018,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 4, Saigon",
       mapLink: "https://maps.google.com/?q=Dragon+Wharf+Ho+Chi+Minh+Museum+District+4",
       rating: 4.5,
-      tags: ["museum", "history", "ho-chi-minh"]
+      tags: ["museum", "history", "ho-chi-minh"],
+      image: "/images/insider/historical/ben-nha-rong.jpg" // Dragon Wharf
     },
     {
       id: 6,
@@ -692,7 +1030,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 3, Saigon",
       mapLink: "https://maps.google.com/?q=Secret+Bunker+1968+District+3",
       rating: 4.6,
-      tags: ["bunker", "history", "war", "hidden"]
+      tags: ["bunker", "history", "war", "hidden"],
+      image: "/images/insider/historical/food-3-bun-thit-nuong.jpg" // Secret Bunker
     },
     {
       id: 7,
@@ -703,7 +1042,8 @@ const InsiderTipsThankYou = ({ theme }) => {
       location: "District 1, Saigon",
       mapLink: "https://maps.google.com/?q=Post+Office+Notre+Dame+Cathedral+District+1",
       rating: 4.8,
-      tags: ["architecture", "free", "cathedral", "post-office"]
+      tags: ["architecture", "free", "cathedral", "post-office"],
+      image: "/images/insider/historical/buu-dien-va-nha-tho-duc-ba.jpg" // Post Office and Notre Dame Cathedral
     }
   ];
 
@@ -1038,6 +1378,7 @@ const InsiderTipsThankYou = ({ theme }) => {
   const categories = [
     { id: "all", label: "All", icon: "📍" },
     { id: "food", label: "Food", icon: "🍜" },
+    { id: "food-street", label: "Food Streets", icon: "🏮" },
     { id: "transportation", label: "Transport", icon: "🚗" },
     { id: "money", label: "Money", icon: "💰" },
     { id: "safety", label: "Safety", icon: "🛡️" },
@@ -1079,6 +1420,35 @@ const InsiderTipsThankYou = ({ theme }) => {
     const matchesCategory = activeFoodCategory === "all" || stop.category === activeFoodCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Grouping for Food
+  const isFoodStreet = (item) =>
+    /phố ẩm thực|vĩnh khánh|food street/i.test(item.name || "");
+
+  const isVegetarian = (item) =>
+    item.category === "vegetarian" || (Array.isArray(item.tags) && item.tags.includes("vegetarian"));
+
+  // New group for specific vegetarian restaurants (IDs 24-28)
+  const isSpecialVegetarianGroup = (item) =>
+    [24, 25, 26, 27, 28].includes(item.id);
+
+  const restaurantStops = filteredFoodStops.filter(
+    (s) => s.category === "restaurant" && !isFoodStreet(s) && !isSpecialVegetarianGroup(s)
+  );
+  const dishStops = filteredFoodStops.filter((s) => s.category === "street-food");
+  const vegetarianStops = filteredFoodStops.filter((s) => isVegetarian(s) && !isSpecialVegetarianGroup(s));
+  const specialVegetarianGroupStops = filteredFoodStops.filter((s) => isSpecialVegetarianGroup(s));
+  const foodStreetStops = filteredFoodStops.filter((s) => isFoodStreet(s));
+  const cafeStops = filteredFoodStops.filter((s) => s.category === "cafe");
+  const lateNightStops = filteredFoodStops.filter((s) => 
+    s.category === "late-night" || (Array.isArray(s.tags) && s.tags.includes("late-night"))
+  );
+  const breakfastStops = filteredFoodStops.filter((s) => 
+    s.category === "breakfast" || (Array.isArray(s.tags) && s.tags.includes("breakfast"))
+  );
+  const rooftopStops = filteredFoodStops.filter((s) => 
+    s.category === "rooftop" || (Array.isArray(s.tags) && s.tags.includes("rooftop"))
+  );
 
   // Filter tips/tricks
   const filteredTips = tips.filter(tip => 
@@ -1143,6 +1513,27 @@ const InsiderTipsThankYou = ({ theme }) => {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  // Scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   // Show loading state while checking access
@@ -1302,13 +1693,62 @@ const InsiderTipsThankYou = ({ theme }) => {
           </section>
         )}
 
-        {/* 2. Cards Section - Food Stops, Accommodation, Nightlife, etc. */}
-        {/* Food Stops - Only show when Food category is selected */}
+        {/* Food Streets - own category view */}
+        {activeCategory === "food-street" && foodStreetStops.length > 0 && (
+          <section className="mb-12">
+            <h2 className={`text-2xl sm:text-3xl font-bold mb-6 ${textColor}`}>🏮 Phố Ẩm Thực</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {foodStreetStops.map((stop) => (
+                <div key={stop.id} className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}>
+                  {stop.image ? (
+                    <img src={stop.image} alt={stop.name} className="w-full h-48 object-cover" onError={(e)=>{e.target.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";}} />
+                  ) : (
+                    <div className={`w-full h-48 flex items-center justify-center ${isMorning ? "bg-gray-200" : "bg-gray-700"}`}>
+                      <div className={`text-center ${mutedColor}`}>
+                        <div className="text-4xl mb-2">📸</div>
+                        <div className="text-xs">Photo coming soon</div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className={`text-lg font-bold ${textColor} mb-2 flex items-center flex-wrap`}>
+                          {stop.name}
+                          {isVegetarian(stop) && (
+                            <span className={`ml-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-semibold ${isMorning ? "bg-green-100 text-green-700 border border-green-200" : "bg-green-900/30 text-green-300 border border-green-500/30"}`}>CHAY</span>
+                          )}
+                        </h3>
+                        <p className={`text-sm ${mutedColor} mb-3`}>{stop.description}</p>
+                      </div>
+                      {stop.rating && (
+                        <div className={`text-sm font-semibold ${isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"}`}>⭐ {stop.rating}</div>
+                      )}
+                    </div>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span><span className={`text-sm ${mutedColor}`}>{stop.price}</span></div>
+                      <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span><span className={`text-sm ${mutedColor}`}>{stop.location}</span></div>
+                    </div>
+                    {stop.mapLink && (
+                      <a href={stop.mapLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${isMorning ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]" : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"}`}>
+                        <span>🗺️</span>
+                        Open in Maps
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 2. Cards Section - Food (grouped) */}
         {(activeCategory === "all" || activeCategory === "food") && filteredFoodStops.length > 0 && (
           <section className="mb-12" ref={tipsRef}>
             <div className="flex items-center justify-between mb-6">
               <h2 className={`text-2xl sm:text-3xl font-bold ${textColor}`}>
-                🍜 Food Stops
+                <span className="text-2xl sm:text-3xl">🍜 Food</span>
+                <span className="text-base sm:text-lg ml-2 opacity-70">(Ẩm thực)</span>
               </h2>
               <div className="flex flex-wrap gap-2">
                 {foodCategories.map((cat) => (
@@ -1329,71 +1769,308 @@ const InsiderTipsThankYou = ({ theme }) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {filteredFoodStops.map((stop) => (
-                <div
-                  key={stop.id}
-                  className={`${cardBg} rounded-xl p-5 hover:shadow-xl transition-all backdrop-blur-sm`}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
+            {/* Quán ăn (Restaurant) */}
+            {restaurantStops.length > 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🍽️ Restaurant</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Quán ăn)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {restaurantStops.map((stop) => (
+                    <div key={stop.id} className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}>
+                      {stop.image ? (
+                        <img src={stop.image} alt={stop.name} className="w-full h-48 object-cover" onError={(e)=>{e.target.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";}} />
+                      ) : (
+                        <div className={`w-full h-48 flex items-center justify-center ${isMorning ? "bg-gray-200" : "bg-gray-700"}`}>
+                          <div className={`text-center ${mutedColor}`}>
+                            <div className="text-4xl mb-2">📸</div>
+                            <div className="text-xs">Photo coming soon</div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className={`text-lg font-bold ${textColor} mb-2 flex items-center flex-wrap`}>
+                              {stop.name}
+                              {isVegetarian(stop) && (
+                                <span className={`ml-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-semibold ${isMorning ? "bg-green-100 text-green-700 border border-green-200" : "bg-green-900/30 text-green-300 border border-green-500/30"}`}>CHAY</span>
+                              )}
+                            </h3>
+                            <p className={`text-sm ${mutedColor} mb-3`}>{stop.description}</p>
+                          </div>
+                          {stop.rating && (
+                            <div className={`text-sm font-semibold ${isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"}`}>⭐ {stop.rating}</div>
+                          )}
+                        </div>
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span><span className={`text-sm ${mutedColor}`}>{stop.price}</span></div>
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span><span className={`text-sm ${mutedColor}`}>{stop.location}</span></div>
+                        </div>
+                        {stop.mapLink && (
+                          <a href={stop.mapLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${isMorning ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]" : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"}`}>
+                            <span>🗺️</span>
+                            Open in Maps
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Món lẻ (Street food / Dish) */}
+            {dishStops.length > 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🍜 Street Vendor</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Món lẻ)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {dishStops.map((stop) => (
+                    <div key={stop.id} className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}>
+                      {stop.image ? (
+                        <img src={stop.image} alt={stop.name} className="w-full h-48 object-cover" onError={(e)=>{e.target.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";}} />
+                      ) : (
+                        <div className={`w-full h-48 flex items-center justify-center ${isMorning ? "bg-gray-200" : "bg-gray-700"}`}>
+                          <div className={`text-center ${mutedColor}`}>
+                            <div className="text-4xl mb-2">📸</div>
+                            <div className="text-xs">Photo coming soon</div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className={`text-lg font-bold ${textColor} mb-2 flex items-center flex-wrap`}>
+                              {stop.name}
+                              {isVegetarian(stop) && (
+                                <span className={`ml-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-semibold ${isMorning ? "bg-green-100 text-green-700 border border-green-200" : "bg-green-900/30 text-green-300 border border-green-500/30"}`}>CHAY</span>
+                              )}
+                            </h3>
+                            <p className={`text-sm ${mutedColor} mb-3`}>{stop.description}</p>
+                          </div>
+                          {stop.rating && (
+                            <div className={`text-sm font-semibold ${isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"}`}>⭐ {stop.rating}</div>
+                          )}
+                        </div>
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span><span className={`text-sm ${mutedColor}`}>{stop.price}</span></div>
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span><span className={`text-sm ${mutedColor}`}>{stop.location}</span></div>
+                        </div>
+                        {stop.mapLink && (
+                          <a href={stop.mapLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${isMorning ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]" : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"}`}>
+                            <span>🗺️</span>
+                            Open in Maps
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Special Vegetarian Group */}
+            {specialVegetarianGroupStops.length > 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🌱 Featured Vegetarian Restaurants</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Quán chay nổi bật)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {specialVegetarianGroupStops.map((stop) => (
+                    <div key={stop.id} className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}>
+                      {stop.image ? (
+                        <img src={stop.image} alt={stop.name} className="w-full h-48 object-cover" onError={(e)=>{e.target.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";}} />
+                      ) : (
+                        <div className={`w-full h-48 flex items-center justify-center ${isMorning ? "bg-gray-200" : "bg-gray-700"}`}>
+                          <div className={`text-center ${mutedColor}`}>
+                            <div className="text-4xl mb-2">📸</div>
+                            <div className="text-xs">Photo coming soon</div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className={`text-lg font-bold ${textColor} mb-2 flex items-center flex-wrap`}>
+                              {stop.name}
+                              <span className={`ml-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-semibold ${isMorning ? "bg-green-100 text-green-700 border border-green-200" : "bg-green-900/30 text-green-300 border border-green-500/30"}`}>CHAY</span>
+                            </h3>
+                            <p className={`text-sm ${mutedColor} mb-3`}>{stop.description}</p>
+                          </div>
+                          {stop.rating && (
+                            <div className={`text-sm font-semibold ${isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"}`}>⭐ {stop.rating}</div>
+                          )}
+                        </div>
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span><span className={`text-sm ${mutedColor}`}>{stop.price}</span></div>
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span><span className={`text-sm ${mutedColor}`}>{stop.location}</span></div>
+                        </div>
+                        {stop.mapLink && (
+                          <a href={stop.mapLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${isMorning ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]" : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"}`}>
+                            <span>🗺️</span>
+                            Open in Maps
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Quán chay (Vegetarian) */}
+            {vegetarianStops.length > 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🥗 Vegetarian Restaurant</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Quán chay)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {vegetarianStops.map((stop) => (
+                    <div key={stop.id} className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}>
+                      {stop.image ? (
+                        <img src={stop.image} alt={stop.name} className="w-full h-48 object-cover" onError={(e)=>{e.target.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";}} />
+                      ) : (
+                        <div className={`w-full h-48 flex items-center justify-center ${isMorning ? "bg-gray-200" : "bg-gray-700"}`}>
+                          <div className={`text-center ${mutedColor}`}>
+                            <div className="text-4xl mb-2">📸</div>
+                            <div className="text-xs">Photo coming soon</div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className={`text-lg font-bold ${textColor} mb-2 flex items-center flex-wrap`}>
+                              {stop.name}
+                              <span className={`ml-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full font-semibold ${isMorning ? "bg-green-100 text-green-700 border border-green-200" : "bg-green-900/30 text-green-300 border border-green-500/30"}`}>CHAY</span>
+                            </h3>
+                            <p className={`text-sm ${mutedColor} mb-3`}>{stop.description}</p>
+                          </div>
+                          {stop.rating && (
+                            <div className={`text-sm font-semibold ${isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"}`}>⭐ {stop.rating}</div>
+                          )}
+                        </div>
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span><span className={`text-sm ${mutedColor}`}>{stop.price}</span></div>
+                          <div className="flex items-center gap-2"><span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span><span className={`text-sm ${mutedColor}`}>{stop.location}</span></div>
+                        </div>
+                        {stop.mapLink && (
+                          <a href={stop.mapLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${isMorning ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]" : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"}`}>
+                            <span>🗺️</span>
+                            Open in Maps
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Phố Ẩm Thực sẽ có mục riêng khi chọn category 'Food Streets' */}
+
+            {/* Placeholder for empty categories */}
+            {activeFoodCategory === "cafe" && cafeStops.length === 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">☕ Cafes</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Quán cà phê)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className={`${cardBg} rounded-xl p-8 hover:shadow-xl transition-all backdrop-blur-sm border-2 ${
+                    isMorning ? "border-gray-300" : "border-white/20"
+                  }`}>
+                    <div className="text-center">
+                      <div className="text-5xl mb-4">☕</div>
                       <h3 className={`text-lg font-bold ${textColor} mb-2`}>
-                        {stop.name}
+                        Update Soon
                       </h3>
-                      <p className={`text-sm ${mutedColor} mb-3`}>
-                        {stop.description}
+                      <p className={`text-sm ${mutedColor}`}>
+                        Cafe recommendations coming soon!
                       </p>
                     </div>
-                    {stop.rating && (
-                      <div className={`text-sm font-semibold ${
-                        isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
-                      }`}>
-                        ⭐ {stop.rating}
-                      </div>
-                    )}
                   </div>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span>
-                      <span className={`text-sm ${mutedColor}`}>{stop.price}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span>
-                      <span className={`text-sm ${mutedColor}`}>{stop.location}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {stop.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className={`text-xs px-2 py-1 rounded-full ${
-                            isMorning
-                              ? "bg-[#2d5016]/10 text-[#2d5016]"
-                              : "bg-[#4f46e5]/20 text-[#4cc9f0]"
-                          }`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <a
-                    href={stop.mapLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                      isMorning
-                        ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
-                        : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"
-                    }`}
-                  >
-                    <span>🗺️</span>
-                    Open in Maps
-                  </a>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+
+            {activeFoodCategory === "late-night" && lateNightStops.length === 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🌙 Late Night</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Đêm khuya)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className={`${cardBg} rounded-xl p-8 hover:shadow-xl transition-all backdrop-blur-sm border-2 ${
+                    isMorning ? "border-gray-300" : "border-white/20"
+                  }`}>
+                    <div className="text-center">
+                      <div className="text-5xl mb-4">🌙</div>
+                      <h3 className={`text-lg font-bold ${textColor} mb-2`}>
+                        Update Soon
+                      </h3>
+                      <p className={`text-sm ${mutedColor}`}>
+                        Late night spots coming soon!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeFoodCategory === "breakfast" && breakfastStops.length === 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🥐 Breakfast</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Bữa sáng)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className={`${cardBg} rounded-xl p-8 hover:shadow-xl transition-all backdrop-blur-sm border-2 ${
+                    isMorning ? "border-gray-300" : "border-white/20"
+                  }`}>
+                    <div className="text-center">
+                      <div className="text-5xl mb-4">🥐</div>
+                      <h3 className={`text-lg font-bold ${textColor} mb-2`}>
+                        Update Soon
+                      </h3>
+                      <p className={`text-sm ${mutedColor}`}>
+                        Breakfast spots coming soon!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeFoodCategory === "rooftop" && rooftopStops.length === 0 && (
+              <div className="mb-10">
+                <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>
+                  <span className="text-xl sm:text-2xl">🏙️ Rooftop</span>
+                  <span className="text-sm sm:text-base ml-2 opacity-70">(Tầng thượng)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className={`${cardBg} rounded-xl p-8 hover:shadow-xl transition-all backdrop-blur-sm border-2 ${
+                    isMorning ? "border-gray-300" : "border-white/20"
+                  }`}>
+                    <div className="text-center">
+                      <div className="text-5xl mb-4">🏙️</div>
+                      <h3 className={`text-lg font-bold ${textColor} mb-2`}>
+                        Update Soon
+                      </h3>
+                      <p className={`text-sm ${mutedColor}`}>
+                        Rooftop venues coming soon!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         )}
 
@@ -1597,64 +2274,87 @@ const InsiderTipsThankYou = ({ theme }) => {
               {filteredHistoricalPlaces.map((item) => (
                 <div
                   key={item.id}
-                  className={`${cardBg} rounded-xl p-5 hover:shadow-xl transition-all backdrop-blur-sm`}
+                  className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className={`text-lg font-bold ${textColor} mb-2`}>
-                        {item.name}
-                      </h3>
-                      <p className={`text-sm ${mutedColor} mb-3`}>
-                        {item.description}
-                      </p>
-                    </div>
-                    {item.rating && (
-                      <div className={`text-sm font-semibold ${
-                        isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
-                      }`}>
-                        ⭐ {item.rating}
+                  {/* Historical Place Image */}
+                  {item.image ? (
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="w-full h-48 object-cover"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect fill='%23ddd' width='800' height='600'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EImage Coming Soon%3C/text%3E%3C/svg%3E";
+                      }}
+                    />
+                  ) : (
+                    <div className={`w-full h-48 flex items-center justify-center ${
+                      isMorning ? "bg-gray-200" : "bg-gray-700"
+                    }`}>
+                      <div className={`text-center ${mutedColor}`}>
+                        <div className="text-4xl mb-2">📸</div>
+                        <div className="text-xs">Photo coming soon</div>
                       </div>
+                    </div>
+                  )}
+                  
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className={`text-lg font-bold ${textColor} mb-2`}>
+                          {item.name}
+                        </h3>
+                        <p className={`text-sm ${mutedColor} mb-3`}>
+                          {item.description}
+                        </p>
+                      </div>
+                      {item.rating && (
+                        <div className={`text-sm font-semibold ${
+                          isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
+                        }`}>
+                          ⭐ {item.rating}
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-semibold ${textColor}`}>💰 Entry Fee:</span>
+                        <span className={`text-sm ${mutedColor}`}>{item.price}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span>
+                        <span className={`text-sm ${mutedColor}`}>{item.location}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {item.tags.map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className={`text-xs px-2 py-1 rounded-full ${
+                              isMorning
+                                ? "bg-[#2d5016]/10 text-[#2d5016]"
+                                : "bg-[#4f46e5]/20 text-[#4cc9f0]"
+                            }`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    {item.mapLink && (
+                      <a
+                        href={item.mapLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                          isMorning
+                            ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
+                            : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"
+                        }`}
+                      >
+                        <span>🗺️</span>
+                        Open in Maps
+                      </a>
                     )}
                   </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${textColor}`}>💰 Entry Fee:</span>
-                      <span className={`text-sm ${mutedColor}`}>{item.price}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span>
-                      <span className={`text-sm ${mutedColor}`}>{item.location}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {item.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className={`text-xs px-2 py-1 rounded-full ${
-                            isMorning
-                              ? "bg-[#2d5016]/10 text-[#2d5016]"
-                              : "bg-[#4f46e5]/20 text-[#4cc9f0]"
-                          }`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  {item.mapLink && (
-                    <a
-                      href={item.mapLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                        isMorning
-                          ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
-                          : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"
-                      }`}
-                    >
-                      <span>🗺️</span>
-                      Open in Maps
-                    </a>
-                  )}
                 </div>
               ))}
             </div>
@@ -1725,50 +2425,66 @@ const InsiderTipsThankYou = ({ theme }) => {
               {filteredNightlife.map((item) => (
                 <div
                   key={item.id}
-                  className={`${cardBg} rounded-xl p-5 hover:shadow-xl transition-all backdrop-blur-sm`}
+                  className={`${cardBg} rounded-xl overflow-hidden hover:shadow-xl transition-all backdrop-blur-sm`}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className={`text-lg font-bold ${textColor} mb-2`}>
-                        {item.name}
-                      </h3>
-                      <p className={`text-sm ${mutedColor} mb-3`}>
-                        {item.description}
-                      </p>
-                    </div>
-                    {item.rating && (
-                      <div className={`text-sm font-semibold ${
-                        isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
-                      }`}>
-                        ⭐ {item.rating}
+                  {/* Nightlife Image Carousel */}
+                  {item.image ? (
+                    <ImageCarousel images={item.images || [item.image]} name={item.name} />
+                  ) : (
+                    <div className={`w-full h-48 flex items-center justify-center ${
+                      isMorning ? "bg-gray-200" : "bg-gray-700"
+                    }`}>
+                      <div className={`text-center ${mutedColor}`}>
+                        <div className="text-4xl mb-2">📸</div>
+                        <div className="text-xs">Photo coming soon</div>
                       </div>
+                    </div>
+                  )}
+                  
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className={`text-lg font-bold ${textColor} mb-2`}>
+                          {item.name}
+                        </h3>
+                        <p className={`text-sm ${mutedColor} mb-3`}>
+                          {item.description}
+                        </p>
+                      </div>
+                      {item.rating && (
+                        <div className={`text-sm font-semibold ${
+                          isMorning ? "text-[#2d5016]" : "text-[#4cc9f0]"
+                        }`}>
+                          ⭐ {item.rating}
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span>
+                        <span className={`text-sm ${mutedColor}`}>{item.price}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span>
+                        <span className={`text-sm ${mutedColor}`}>{item.location}</span>
+                      </div>
+                    </div>
+                    {item.mapLink && (
+                      <a
+                        href={item.mapLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                          isMorning
+                            ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
+                            : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"
+                        }`}
+                      >
+                        <span>🗺️</span>
+                        Open in Maps
+                      </a>
                     )}
                   </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${textColor}`}>💰 Price:</span>
-                      <span className={`text-sm ${mutedColor}`}>{item.price}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-semibold ${textColor}`}>📍 Location:</span>
-                      <span className={`text-sm ${mutedColor}`}>{item.location}</span>
-                    </div>
-                  </div>
-                  {item.mapLink && (
-                    <a
-                      href={item.mapLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                        isMorning
-                          ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
-                          : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"
-                      }`}
-                    >
-                      <span>🗺️</span>
-                      Open in Maps
-                    </a>
-                  )}
                 </div>
               ))}
             </div>
@@ -1937,6 +2653,34 @@ const InsiderTipsThankYou = ({ theme }) => {
           </p>
         </footer>
       </div>
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className={`fixed bottom-8 right-8 z-50 p-4 rounded-full shadow-lg transition-all duration-300 hover:scale-110 ${
+            isMorning
+              ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
+              : "bg-[#4f46e5] text-white hover:bg-[#6366f1]"
+          }`}
+          aria-label="Scroll to top"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
+        </button>
+      )}
 
       <style>{`
         @media print {

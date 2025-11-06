@@ -5,6 +5,23 @@
     <link rel="icon" type="image/png" href="/images/night-logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+      window.tailwind = {
+        config: {
+          safelist: [
+            // gradient brand colors
+            'from-[#2d5016]', 'to-[#3a7d2f]',
+            'from-[#4f46e5]', 'to-[#06b6d4]',
+            // backgrounds and borders used in cards
+            'bg-[#0f1218]', 'bg-[#12141b]', 'border-white/20', 'border-white/10',
+            // text accents
+            'text-white', 'text-[#2d5016]', 'text-[#4cc9f0]',
+            // focus rings
+            'focus-visible:ring-[#2d5016]', 'focus-visible:ring-[#4cc9f0]'
+          ]
+        }
+      };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6780582719951537"
      crossorigin="anonymous"></script>

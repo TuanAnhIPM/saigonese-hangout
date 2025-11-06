@@ -1,0 +1,438 @@
+const foodStops = [
+  {
+    "id": 1,
+    "name": "Cơm tấm Nguyễn Văn Cừ",
+    "category": "restaurant",
+    "description": "Broken Rice  - Open: 07:00 – 15:00",
+    "price": "120,000 VND/dish",
+    "location": "District 1, Saigon",
+    "mapLink": "https://maps.google.com/?q=C%C6%A1m%20t%E1%BA%A5m%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB+Qu%E1%BA%ADn%201+Saigon",
+    "rating": 4.548922010887322,
+    "tags": [
+      "broken",
+      "budget"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "A Tùng Bánh mì bò nướng bơ Campuchia",
+    "category": "street-food",
+    "description": "Special Version of Banh Mi - Open: 12PM–10:30 PM",
+    "price": "30,000 VND",
+    "location": "District 1, Saigon",
+    "mapLink": "https://maps.google.com/?q=A%20T%C3%B9ng%20B%C3%A1nh%20m%C3%AC%20b%C3%B2%20n%C6%B0%E1%BB%9Bng%20b%C6%A1%20Campuchia+Qu%E1%BA%ADn%201+Saigon",
+    "rating": 4.8801613537743345,
+    "tags": [
+      "special",
+      "budget"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Bún thịt nướng Kiều Bảo",
+    "category": "restaurant",
+    "description": "Grilled Pork and Rice Vermicelli  - Open: 11 AM–9 PM",
+    "price": "35,000 VND",
+    "location": "District 1, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%BAn%20th%E1%BB%8Bt%20n%C6%B0%E1%BB%9Bng%20Ki%E1%BB%81u%20B%E1%BA%A3o+Qu%E1%BA%ADn%201+Saigon",
+    "rating": 4.8045539466494445,
+    "tags": [
+      "grilled",
+      "budget"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Bánh Xèo 46A",
+    "category": "restaurant",
+    "description": "Sizzling Cake - Open: 10AM–1:30PM\n4PM–8:50 PM",
+    "price": "100,000 VND",
+    "location": "District 1, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20X%C3%A8o%2046A+Qu%E1%BA%ADn%201+Saigon",
+    "rating": 4.54222398598385,
+    "tags": [
+      "sizzling",
+      "budget"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Bánh Mì Huynh Hoa",
+    "category": "street-food",
+    "description": "Banh Mi Vietnamese Baguette - Open: 6 AM–10 PM",
+    "price": "60,000 VND",
+    "location": "District 1, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20M%C3%AC%20Huynh%20Hoa+Qu%E1%BA%ADn%201+Saigon",
+    "rating": 4.740190041128666,
+    "tags": [
+      "banh",
+      "budget"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Phở",
+    "category": "restaurant",
+    "description": "Pho - Open: 6 AM–12 PM",
+    "price": "70 - 90,000 VND",
+    "location": "District 1, Saigon",
+    "mapLink": "https://maps.google.com/?q=Ph%E1%BB%9F+Qu%E1%BA%ADn%201+Saigon",
+    "rating": 4.5416279122417755,
+    "tags": [
+      "pho",
+      "budget"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Bun Bo Hue Huong Giang",
+    "category": "restaurant",
+    "description": "Spicy Beef Noodle Soup - Open: 7AM–12:30PM\n 4PM–8:30PM",
+    "price": "70 - 90,000 VND",
+    "location": "District 3, Saigon",
+    "mapLink": "https://maps.google.com/?q=Bun%20Bo%20Hue%20Huong%20Giang+Qu%E1%BA%ADn%203+Saigon",
+    "rating": 4.878627273684034,
+    "tags": [
+      "spicy",
+      "budget"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Chuối Nếp Nướng Võ Văn Tần",
+    "category": "restaurant",
+    "description": "Grilled Banana Wrapped in \nSticky Rice - Open: 7 AM–9:30 PM",
+    "price": "25,000 VND/dish",
+    "location": "District 3, Saigon",
+    "mapLink": "https://maps.google.com/?q=Chu%E1%BB%91i%20N%E1%BA%BFp%20N%C6%B0%E1%BB%9Bng%20V%C3%B5%20V%C4%83n%20T%E1%BA%A7n+Qu%E1%BA%ADn%203+Saigon",
+    "rating": 4.522237868383753,
+    "tags": [
+      "grilled",
+      "budget"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Bánh Mì Chảo Calmette",
+    "category": "street-food",
+    "description": "Another Special Version of Banh Mi - Open: 9 AM–5 PM",
+    "price": "50,000 VND",
+    "location": "District 4, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20M%C3%AC%20Ch%E1%BA%A3o%20Calmette+Qu%E1%BA%ADn%204+Saigon",
+    "rating": 4.513702914989207,
+    "tags": [
+      "another",
+      "budget"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Phố Ẩm Thực - Vĩnh Khánh\n\"Vinh Khanh Food Street\"",
+    "category": "restaurant",
+    "description": "Drinking and eating ! - Open: 6 AM–9 PM",
+    "price": "Varies",
+    "location": "District 4, Saigon",
+    "mapLink": "https://maps.google.com/?q=Ph%E1%BB%91%20%E1%BA%A8m%20Th%E1%BB%B1c%20-%20V%C4%A9nh%20Kh%C3%A1nh%0A%22Vinh%20Khanh%20Food%20Street%22+Qu%E1%BA%ADn%204+Saigon",
+    "rating": 4.7380363283051175,
+    "tags": [
+      "drinking",
+      "budget"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Bò Nướng Lụi Sả",
+    "category": "restaurant",
+    "description": "Grilled Lemongrass Beef Skewers - Open: 5PM-11PM",
+    "price": "10,000 VND/piece",
+    "location": "District 10, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%B2%20N%C6%B0%E1%BB%9Bng%20L%E1%BB%A5i%20S%E1%BA%A3+Qu%E1%BA%ADn%2010+Saigon",
+    "rating": 4.5499480991435055,
+    "tags": [
+      "grilled",
+      "budget"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Chè",
+    "category": "restaurant",
+    "description": "Hot Sweet Soup - Open: 3PM–11 PM",
+    "price": "10,000 VND/portion",
+    "location": "District 10, Saigon",
+    "mapLink": "https://maps.google.com/?q=Ch%C3%A8+Qu%E1%BA%ADn%2010+Saigon",
+    "rating": 4.87236458844333,
+    "tags": [
+      "hot",
+      "budget"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Hồ Thị Kỷ \n\"Ho Thi Ky Street Food Market\"",
+    "category": "restaurant",
+    "description": "If you're a foodie, this is a heaven for u! - Open: 5–10 PM",
+    "price": "Varies",
+    "location": "District 10, Saigon",
+    "mapLink": "https://maps.google.com/?q=H%E1%BB%93%20Th%E1%BB%8B%20K%E1%BB%B7%20%0A%22Ho%20Thi%20Ky%20Street%20Food%20Market%22+Qu%E1%BA%ADn%2010+Saigon",
+    "rating": 4.868575053339302,
+    "tags": [
+      "if",
+      "budget"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Kem Dừa",
+    "category": "restaurant",
+    "description": "Coconut Ice Cream - Open: 5PM-11PM",
+    "price": "25,000 VND",
+    "location": "District 10, Saigon",
+    "mapLink": "https://maps.google.com/?q=Kem%20D%E1%BB%ABa%20+Qu%E1%BA%ADn%2010+Saigon",
+    "rating": 4.893459987339957,
+    "tags": [
+      "coconut",
+      "budget"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Bò Lá Lốt, Mỡ Chài",
+    "category": "restaurant",
+    "description": " Grilled Beef wrapped in leaves  - Open: 7 AM–9 PM",
+    "price": "50,000 VND",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%B2%20L%C3%A1%20L%E1%BB%91t%2C%20M%E1%BB%A1%20Ch%C3%A0i+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.815317909791004,
+    "tags": [
+      "",
+      "budget"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Bánh Canh Cua",
+    "category": "restaurant",
+    "description": "Crab Noodle Soup - Open: 6 AM–10 PM",
+    "price": "40,000 VND",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20Canh%20Cua+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.836244005931061,
+    "tags": [
+      "crab",
+      "budget"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Ram Quảng Ngon",
+    "category": "restaurant",
+    "description": "Vietnamese food - Check hours",
+    "price": "Varies",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=Ram%20Qu%E1%BA%A3ng%20Ngon+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.896314567953035,
+    "tags": [
+      "budget"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Bánh Ướt Ban Mê",
+    "category": "restaurant",
+    "description": "Vietnamese food - Check hours",
+    "price": "Varies",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20%C6%AF%E1%BB%9Bt%20Ban%20M%C3%AA+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.693806950491386,
+    "tags": [
+      "budget"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Bánh Mỳ Xíu Mại Chén",
+    "category": "restaurant",
+    "description": "Vietnamese food - Check hours",
+    "price": "Varies",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20M%E1%BB%B3%20X%C3%ADu%20M%E1%BA%A1i%20Ch%C3%A9n+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.813724388442378,
+    "tags": [
+      "budget"
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Gà Nướng + Thịt Nướng Cơm Lam",
+    "category": "restaurant",
+    "description": "Vietnamese food - Check hours",
+    "price": "Varies",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=G%C3%A0%20N%C6%B0%E1%BB%9Bng%20%2B%20Th%E1%BB%8Bt%20N%C6%B0%E1%BB%9Bng%20C%C6%A1m%20Lam+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.88812037941839,
+    "tags": [
+      "budget"
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Quán Thuỳ Linh",
+    "category": "restaurant",
+    "description": "Vietnamese food - Check hours",
+    "price": "Varies",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=Qu%C3%A1n%20Thu%E1%BB%B3%20Linh+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.818543099509587,
+    "tags": [
+      "budget"
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Bánh Flan Bình Thuận",
+    "category": "restaurant",
+    "description": "Vietnamese food - Check hours",
+    "price": "Varies",
+    "location": "Bình Thạnh, Saigon",
+    "mapLink": "https://maps.google.com/?q=B%C3%A1nh%20Flan%20B%C3%ACnh%20Thu%E1%BA%ADn+B%C3%ACnh%20Th%E1%BA%A1nh+Saigon",
+    "rating": 4.620692658149291,
+    "tags": [
+      "budget"
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Cơm Tấm Ba Ghiền",
+    "category": "restaurant",
+    "description": "Broken Rice  - Open: 07:30 – 20:30",
+    "price": "70 - 80,000 VND/dish",
+    "location": "Tân Bình, Saigon",
+    "mapLink": "https://maps.google.com/?q=C%C6%A1m%20T%E1%BA%A5m%20Ba%20Ghi%E1%BB%81n%20+T%C3%A2n%20B%C3%ACnh+Saigon",
+    "rating": 4.844058673609473,
+    "tags": [
+      "broken",
+      "budget"
+    ]
+  },
+  {
+    "id": 24,
+    "name": "Food Item 24",
+    "category": "vegetarian",
+    "description": "Everything ! - Open: 7 AM–9 PM",
+    "price": "20 - 35,000 VND/dish",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2024+Vegetarian%20Food+Saigon",
+    "rating": 4.767995129997691,
+    "tags": [
+      "everything",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 25,
+    "name": "Food Item 25",
+    "category": "vegetarian",
+    "description": "Everything hahaa - Open: 6 AM–9:30 PM",
+    "price": "35 - 50,000 VND/dish",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2025+Vegetarian%20Food+Saigon",
+    "rating": 4.8086440418372325,
+    "tags": [
+      "everything",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 26,
+    "name": "Food Item 26",
+    "category": "vegetarian",
+    "description": "Still everything ! - Open: 10 AM–10 PM",
+    "price": "80,000 VND  -  100,000 VND/dish",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2026+Vegetarian%20Food+Saigon",
+    "rating": 4.505951329649022,
+    "tags": [
+      "still",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 27,
+    "name": "Food Item 27",
+    "category": "vegetarian",
+    "description": "Family meal - Open: 11 AM–2:30 PM\n5–9 PM",
+    "price": "50 - 70,000 VND/dish",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2027+Vegetarian%20Food+Saigon",
+    "rating": 4.606460690944947,
+    "tags": [
+      "family",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 28,
+    "name": "Food Item 28",
+    "category": "vegetarian",
+    "description": "Vegan Hot Pot  - Open: 10 AM–10 PM",
+    "price": "100,000 VND/person",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2028+Vegetarian%20Food+Saigon",
+    "rating": 4.7669520343107195,
+    "tags": [
+      "vegan",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 29,
+    "name": "Food Item 29",
+    "category": "vegetarian",
+    "description": "Avocado & Coconut Ice Cream - Open: 5PM-11PM",
+    "price": "30,000 VND",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2029+Vegetarian%20Food+Saigon",
+    "rating": 4.728018212147508,
+    "tags": [
+      "avocado",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 30,
+    "name": "Food Item 30",
+    "category": "vegetarian",
+    "description": "Grilled Banana Wrapped in \nSticky Rice - Open: 7 AM–9:30 PM",
+    "price": "25,000 VND/dish",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2030+Vegetarian%20Food+Saigon",
+    "rating": 4.618521234565885,
+    "tags": [
+      "grilled",
+      "vegetarian",
+      "budget"
+    ]
+  },
+  {
+    "id": 31,
+    "name": "Food Item 31",
+    "category": "vegetarian",
+    "description": "Hot Sweet Soup - Open: 3PM–11 PM",
+    "price": "10,000 VND/portion",
+    "location": "Vegetarian Food, Saigon",
+    "mapLink": "https://maps.google.com/?q=Food%20Item%2031+Vegetarian%20Food+Saigon",
+    "rating": 4.698599798452774,
+    "tags": [
+      "hot",
+      "vegetarian",
+      "budget"
+    ]
+  }
+];

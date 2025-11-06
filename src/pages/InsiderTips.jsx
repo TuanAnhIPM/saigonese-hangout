@@ -117,6 +117,21 @@ const InsiderTips = ({ theme }) => {
               move smarter, and eat like a local.
             </p>
 
+            {/* Refund Policy Banner */}
+            <div className={`${isMorning ? "bg-green-50 border-green-200" : "bg-emerald-900/20 border-emerald-500/30"} border-2 rounded-xl p-4 mb-6`}>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">💰</span>
+                <div>
+                  <h4 className={`font-bold text-sm mb-1 ${textColor}`}>
+                    💯 Money-Back Guarantee
+                  </h4>
+                  <p className={`text-xs leading-relaxed ${mutedColor}`}>
+                    Not satisfied with the content? We'll refund you. No questions asked. Simply reply to your receipt email within 7 days.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Product Card */}
             <div className={`${cardBgSecondary} rounded-xl p-5 flex flex-col justify-between h-full border border-white/10 hover:border-white/30 transition-all hover:shadow-lg mb-4`}>
               <div className="space-y-3">
@@ -152,6 +167,10 @@ const InsiderTips = ({ theme }) => {
                   <span className={`${mutedColor} flex items-center gap-1`}>
                     <span>✓</span>
                     <span>Updated regularly</span>
+                  </span>
+                  <span className={`${mutedColor} flex items-center gap-1`}>
+                    <span>✓</span>
+                    <span>Money-back guarantee</span>
                   </span>
                 </div>
               </div>
@@ -210,31 +229,56 @@ const InsiderTips = ({ theme }) => {
 
           {/* Right Column - Teasers & Social Proof */}
           <div className={`${cardBg} rounded-2xl p-6 space-y-4 backdrop-blur-sm`}>
-            {/* Teasers */}
+            {/* Teasers with Actual Images */}
             <div className="space-y-3">
-              <div className={`${cardBgSecondary} rounded-xl p-4`}>
-                <div className={`text-xs mb-2 ${mutedColor}`}>Sneak peek: Food Stops with Maps</div>
-                <div
-                  className="h-36 rounded-lg opacity-60"
-                  style={{
-                    background: isMorning
-                      ? "linear-gradient(135deg, #e5e7eb, #d1d5db)"
-                      : "linear-gradient(135deg, #1f2430, #0b0c10)",
-                  }}
-                />
-              </div>
-              <div className={`${cardBgSecondary} rounded-xl p-4`}>
-                <div className={`text-xs mb-2 ${mutedColor}`}>
-                  Sneak peek: Insider Tips & Tricks
+              <div className={`${cardBgSecondary} rounded-xl p-4 overflow-hidden`}>
+                <div className={`text-xs mb-2 font-semibold ${textColor}`}>📍 Food Stops with Maps</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <img 
+                    src="/images/insider/food/food-1-com-tam.jpeg" 
+                    alt="Saigon Food" 
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
+                  <img 
+                    src="/images/insider/food/food-6-pho.jpeg" 
+                    alt="Saigon Food" 
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
                 </div>
-                <div
-                  className="h-24 rounded-lg opacity-60"
-                  style={{
-                    background: isMorning
-                      ? "linear-gradient(135deg, #e5e7eb, #d1d5db)"
-                      : "linear-gradient(135deg, #1f2430, #0b0c10)",
-                  }}
-                />
+              </div>
+              <div className={`${cardBgSecondary} rounded-xl p-4 overflow-hidden`}>
+                <div className={`text-xs mb-2 font-semibold ${textColor}`}>
+                  🍻 Nightlife & 🏛️ Historical Places
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <img 
+                    src="/images/insider/historical/dinh-doc-lap.jpg" 
+                    alt="Historical Place" 
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
+                  <img 
+                    src="/images/insider/food/food-11-bo-nuong-lui-sa.jpeg" 
+                    alt="Saigon Food" 
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
+                </div>
+              </div>
+              <div className={`${cardBgSecondary} rounded-xl p-4 overflow-hidden`}>
+                <div className={`text-xs mb-2 font-semibold ${textColor}`}>
+                  💡 Insider Tips & Tricks
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <img 
+                    src="/images/insider/historical/buu-dien-va-nha-tho-duc-ba.jpg" 
+                    alt="Saigon Landmark" 
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
+                  <img 
+                    src="/images/insider/food/food-16-banh-canh-cua.jpeg" 
+                    alt="Saigon Food" 
+                    className="w-full h-20 object-cover rounded-lg"
+                  />
+                </div>
               </div>
             </div>
 
@@ -292,7 +336,7 @@ const InsiderTips = ({ theme }) => {
             <div>
               <strong className={textColor}>Refunds?</strong>
               <p className={`text-sm mt-1 ${mutedColor}`}>
-                Reply to your receipt within 7 days—no questions asked.
+                Not satisfied with the content? We'll refund you. No questions asked. Simply reply to your receipt email within 7 days.
               </p>
             </div>
           </div>
