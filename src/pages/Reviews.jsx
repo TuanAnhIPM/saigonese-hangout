@@ -69,24 +69,26 @@ const Reviews = ({ theme }) => {
   }, [selectedSrc]);
 
   return (
-    <section className="max-w-6xl mx-auto">
-      <h1 className={`text-3xl sm:text-4xl font-bold mb-4 ${textColor}`}>Customer Reviews</h1>
-      <p className={`mb-8 ${subColor}`}>
-        Authentic screenshots from our customers. Thanks for the love!
-      </p>
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="text-center mb-8 sm:mb-12">
+        <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 ${textColor}`}>Customer Reviews</h1>
+        <p className={`text-base sm:text-lg ${subColor}`}>
+          Authentic screenshots from our customers. Thanks for the love!
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
         {IMAGES.map((src, i) => (
           <div
             key={i}
-            className={`rounded-xl overflow-hidden shadow ${cardBg} border border-white/10`}
+            className={`rounded-lg sm:rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${cardBg} border border-white/10 cursor-pointer group`}
+            onClick={() => setSelectedSrc(src)}
           >
             <img
               src={src}
-              alt="Customer review"
-              className="w-full h-full object-cover cursor-pointer"
+              alt={`Customer review ${i + 1}`}
+              className="w-full h-auto object-cover transition-transform duration-300 group-hover:opacity-90"
               loading="lazy"
-              onClick={() => setSelectedSrc(src)}
             />
           </div>
         ))}

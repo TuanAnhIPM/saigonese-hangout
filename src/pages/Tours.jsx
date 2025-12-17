@@ -11,15 +11,20 @@ const Tours = ({ theme }) => {
       tours: [
         {
           title: "History Tour",
-          desc: "Learn about the history and culture life of Sài Gòn. Visit historic landmarks, learn about Vietnam's past, and discover the stories that shaped this vibrant city.",
+          price: "$24",
+          originalPrice: "$30",
+          duration: "4 hours",
+          desc: "Walk through Saigon's past: colonial architecture, war history, and local culture at 10 iconic locations.",
           img: "/images/morning-tours/history-tour/background.jpg",
           slug: "history",
-        },
-        {
-          title: "Coffee & Market",
-          desc: "Taste Vietnamese coffee and explore hidden markets to try tropical fruits. Experience authentic Vietnamese coffee culture and local trading customs.",
-          img: "/images/morning-tours/coffee-market-tour/background.jpg",
-          slug: "coffee",
+          faqInfo: {
+            stops: "6 stops",
+            dishes: "1 Local Food + 1 Local Drink",
+            transportation: "Go on Scooters (1 person 1 driver)",
+            startTime: "Starts at anytime from 7 AM - 6 PM",
+            guide: "Knowledgable Guide",
+            photos: "Photos included"
+          },
         },
       ]
     },
@@ -27,16 +32,23 @@ const Tours = ({ theme }) => {
       category: "🌙 Night Tours",
       tours: [
         {
-          title: "Street Food Tour",
-          desc: "Taste authentic Saigonese dishes in neon-lit alleys. Discover Saigon's incredible street food scene with a local guide.",
+          title: "Street Food Tour on Scooter",
+          price: "$39",
+          originalPrice: "$49",
+          duration: "4 hours",
+          desc: "New to Saigon? We solve what to eat, how much to pay, and where to go safely.",
           img: "/images/night-tours/street-food-tour/munchies-bg.jpg",
           slug: "streetfood",
-        },
-        {
-          title: "Night-Life Tour",
-          desc: "Drinking, Bar, Karaoke, Club. Experience Saigon's vibrant nightlife! Visit the best bars, clubs, and entertainment venues.",
-          img: "/images/night-tours/night-life-tour/night-life-tour.jpg",
-          slug: "nightlife",
+          faqInfo: {
+            price: "999,000 VND",
+            stops: "5 stops",
+            dishes: "11 dishes",
+            transportation: "Go on scooters (1 person 1 driver)",
+            startTime: "Starts at anytime from 1 PM - 6 PM",
+            duration: "4 hours",
+            vegetarianOption: "Vegetarian option available",
+            kosherOption: "Kosher option available"
+          },
         },
       ]
     },
@@ -60,9 +72,9 @@ const Tours = ({ theme }) => {
   ];
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className={`relative w-full h-[50vh] sm:h-[55vh] md:h-[60vh] flex items-center justify-center ${
+      <section className={`relative w-full min-h-[50vh] sm:min-h-[55vh] md:min-h-[60vh] flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 ${
         isMorning ? "bg-gradient-to-br from-[#fffaf4] to-[#f0e6d2]" : "bg-gradient-to-br from-[#0b0b14] via-[#1a052e] to-[#3d0f55]"
       }`}>
         <div className="text-center px-4 sm:px-6">
@@ -117,9 +129,13 @@ const Tours = ({ theme }) => {
                     <TourCard 
                       key={tourIndex}
                       title={tour.title}
+                      price={tour.price}
+                      originalPrice={tour.originalPrice}
+                      duration={tour.duration}
                       desc={tour.desc}
                       img={tour.img}
                       slug={tour.slug}
+                      faqInfo={tour.faqInfo}
                       theme={theme}
                     />
                   ))}

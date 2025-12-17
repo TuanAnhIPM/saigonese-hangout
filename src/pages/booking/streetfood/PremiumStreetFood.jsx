@@ -30,11 +30,12 @@ const PremiumStreetFood = () => {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-6 text-[#0f3e2c]">
-            Premium Street Food Tour
+            Street Food Tour on Scooter
           </h1>
           <p className="text-xl max-w-3xl mx-auto text-gray-600">
-            Experience Saigon's most exclusive street food scene with VIP access to hidden gems. 
-            This 4-5 hour premium tour includes rare dishes and private tastings.
+            Experience Saigon's authentic street food culture from the back of a scooter! Zip through hidden alleys 
+            and local neighborhoods to discover secret food stalls, then elevate the experience with rooftop views 
+            and Michelin restaurant visits. Ride like a local, eat like a local.
           </p>
         </div>
 
@@ -42,16 +43,28 @@ const PremiumStreetFood = () => {
           {/* Tour Details */}
           <div>
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+              <div className="mb-4">
+                <span className="inline-block px-3 py-1 text-sm font-bold rounded-md bg-red-100 text-red-600 mb-3">
+                  20% OFF
+                </span>
+              </div>
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-4xl font-bold text-purple-600">$59</span>
-                <span className="text-lg text-gray-600">per person • ~1,500,000₫ • 4-5 hours</span>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-xl font-medium text-gray-400 line-through">$49</span>
+                  <span className="text-4xl font-bold text-purple-600">$39</span>
+                </div>
+                <span className="text-lg text-gray-600">per person • 999,000₫ • 4 hours</span>
               </div>
               
               <h2 className="text-2xl font-bold mb-6 text-gray-800">What's Included:</h2>
               <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Gỏi Khô Bò + Nước Mía</strong> - Traditional Vietnamese beef salad with sugarcane juice</span>
+                  <span><strong>Scooter Transportation</strong> - Ride on the back of a scooter with experienced drivers, experience Saigon like a local</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-500 mt-1">✓</span>
+                  <span><strong>Gỏi Khô Bò + Nước Mía</strong> - Traditional Vietnamese beef salad with sugarcane juice (2 options available)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
@@ -59,27 +72,19 @@ const PremiumStreetFood = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Xôi Gà</strong> - Sticky rice with chicken</span>
+                  <span><strong>Bánh Canh Cua</strong> - Thick noodle soup with crab</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Bún Bò Huế</strong> - Spicy beef noodle soup</span>
+                  <span><strong>Chợ Hoa Hồ Thị Kỷ</strong> - Flower market experience with beer, grilled squid, grilled rice paper, lemongrass beef skewers, and coconut ice cream</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Bò Lá Lốt</strong> - Grilled beef wrapped in betel leaves</span>
+                  <span><strong>Rooftop Bar</strong> - End your tour with drinks at a rooftop bar overlooking Saigon</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Kem Dừa</strong> - Coconut ice cream</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Rooftop Bar</strong> - End your tour with drinks at a rooftop bar</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-green-500 mt-1">✓</span>
-                  <span><strong>Michelin Guide Restaurants</strong> - Visit Michelin-selected restaurants</span>
+                  <span><strong>Michelin Guide Restaurants</strong> - Visit Michelin-selected restaurants featuring exceptional Vietnamese cuisine</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
@@ -87,13 +92,13 @@ const PremiumStreetFood = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 mt-1">✓</span>
-                  <span>Small group experience (max 6 people)</span>
+                  <span>Small group experience (max 8 people)</span>
                 </li>
               </ul>
             </div>
 
             <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">Premium Highlights:</h2>
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">Tour Highlights:</h2>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -109,26 +114,17 @@ const PremiumStreetFood = () => {
                     <span className="text-orange-600 text-xl">🥘</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Bánh Xèo</h3>
-                    <p className="text-gray-600">Enjoy crispy Vietnamese pancake at a local favorite</p>
+                    <h3 className="font-semibold text-gray-800">Bánh Xèo & Bánh Canh Cua</h3>
+                    <p className="text-gray-600">Enjoy crispy Vietnamese pancake and thick noodle soup with fresh crab</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-yellow-600 text-xl">🍚</span>
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-red-600 text-xl">🌺</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Xôi Gà & Bún Bò Huế</h3>
-                    <p className="text-gray-600">Experience traditional Vietnamese chicken sticky rice and spicy beef noodle soup</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-green-600 text-xl">🍢</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Bò Lá Lốt</h3>
-                    <p className="text-gray-600">Taste grilled beef wrapped in aromatic betel leaves</p>
+                    <h3 className="font-semibold text-gray-800">Flower Market Nightlife</h3>
+                    <p className="text-gray-600">Experience local nightlife at Hồ Thị Kỷ Flower Market with beer, grilled squid, grilled rice paper, and lemongrass beef skewers</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -256,7 +252,7 @@ const PremiumStreetFood = () => {
                   type="submit"
                   className="w-full bg-purple-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-purple-700 transition-colors"
                 >
-                  Book Premium Street Food Tour - $59
+                  Book Street Food Tour - $39 (999,000₫)
                 </button>
 
                 {/* PayPal Payment */}
@@ -266,9 +262,9 @@ const PremiumStreetFood = () => {
                     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                       <input type="hidden" name="cmd" value="_xclick" />
                       <input type="hidden" name="business" value="thestoriesguys@gmail.com" />
-                      <input type="hidden" name="item_name" value="Premium Street Food Tour - $59 per person" />
+                      <input type="hidden" name="item_name" value="Street Food Tour - $39 (999,000₫) per person" />
                       <input type="hidden" name="currency_code" value="USD" />
-                      <input type="hidden" name="amount" value="59.00" />
+                      <input type="hidden" name="amount" value="39.00" />
                       <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
                       <input type="hidden" name="cancel_return" value="https://saigonese-hangout.com/booking/streetfood/premium" />
                       <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" />

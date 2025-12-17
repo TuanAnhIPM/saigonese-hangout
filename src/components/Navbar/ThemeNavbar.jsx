@@ -98,16 +98,31 @@ const ThemeNavbar = ({ theme, setTheme }) => {
             </button>
 
             {/* Theme Toggle Button */}
-            <button
-              onClick={() => setTheme(isMorning ? "night" : "morning")}
-              className={`w-[100px] sm:w-[130px] px-2 sm:px-4 py-1 sm:py-2 ml-2 sm:ml-3 rounded-lg sm:rounded-xl font-semibold transition text-center text-xs sm:text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+            <div className="relative group ml-2 sm:ml-3">
+              <button
+                onClick={() => setTheme(isMorning ? "night" : "morning")}
+                title={isMorning ? "Switch to Night tour - changes the entire page" : "Switch to Morning tour - changes the entire page"}
+                aria-label={isMorning ? "Switch to Night tour - changes the page design" : "Switch to Morning tour - changes the page design"}
+                className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-semibold transition text-center text-xs sm:text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                  isMorning
+                    ? "bg-gradient-to-r from-[#ffcd3c] to-[#ff914d] text-[#2d5016] hover:opacity-90 focus-visible:ring-[#2d5016]"
+                    : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
+                }`}
+              >
+                Change Tours {isMorning ? "🌞" : "🌙"}
+              </button>
+              {/* Extended tooltip on hover - Desktop only */}
+              <div className={`hidden lg:block absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 ${
                 isMorning
-                  ? "bg-gradient-to-r from-[#ffcd3c] to-[#ff914d] text-[#2d5016] hover:opacity-90 focus-visible:ring-[#2d5016]"
-                  : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
-              }`}
-            >
-              {isMorning ? "🌞 Morning" : "🌙 Night"}
-            </button>
+                  ? "bg-[#2d5016] text-white"
+                  : "bg-[#1a052e] text-white border border-white/20"
+              }`}>
+                Click to {isMorning ? "switch to Night tour" : "switch to Morning tour"} - changes the entire page design
+                <div className={`absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 rotate-45 ${
+                  isMorning ? "bg-[#2d5016]" : "bg-[#1a052e]"
+                }`}></div>
+              </div>
+            </div>
           </div>
         </div>
 

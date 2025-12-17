@@ -313,6 +313,21 @@ const InsiderTips = ({ theme }) => {
                 </div>
               </div>
             </div>
+
+            {/* Partnership Badge */}
+            <div className={`${isMorning ? "bg-blue-50 border-blue-200" : "bg-blue-900/20 border-blue-500/30"} border-2 rounded-xl p-4 mt-4`}>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">🤝</span>
+                <div>
+                  <h4 className={`font-bold text-sm mb-1 ${textColor}`}>
+                    Official B2B Partner
+                  </h4>
+                  <p className={`text-xs leading-relaxed ${mutedColor}`}>
+                    Trusted partner of <span className="font-semibold">East Card</span>, providing exclusive Food Tours for Israeli travelers visiting Saigon.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -44,7 +44,7 @@ const HistoryTour = () => {
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
               <div className="flex items-center gap-4 mb-6">
                 <span className="text-4xl font-bold text-blue-600">$30</span>
-                <span className="text-lg text-gray-600">per person • ~750,000₫ • 3 hours</span>
+                <span className="text-lg text-gray-600">per person • ~750,000₫ • 4 hours</span>
               </div>
               
               <h2 className="text-2xl font-bold mb-6 text-gray-800">What's Included:</h2>
