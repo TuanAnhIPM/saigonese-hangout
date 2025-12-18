@@ -3,7 +3,124 @@ import Footer from "../components/Footer.jsx";
 import Testimonials from "../components/Testimonials.jsx";
 import About from "../pages/About.jsx";
 import { Link } from "react-router-dom";
+import { useState, useEffect, useRef, useMemo } from "react";
 
+// Optimized LazyImage component with Intersection Observer
+const LazyImage = ({ src, alt, index, priority = false, themeKey }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
+  const [imageSrc, setImageSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
+  const imgRef = useRef(null);
+
+  // Reset state when theme changes (themeKey changes)
+  useEffect(() => {
+    setIsLoaded(false);
+    setHasError(false);
+    setImageSrc(src);
+    if (priority || index < 20) {
+      setIsInView(true);
+    } else {
+      setIsInView(false);
+    }
+  }, [themeKey, priority, index, src]);
+
+  // Handle HEIC files - automatically use JPG version if HEIC file
+  useEffect(() => {
+    if (src && src.toLowerCase().endsWith('.heic')) {
+      // Replace .HEIC/.heic with .jpg (Python script will convert to lowercase .jpg)
+      const jpgSrc = src.replace(/\.heic$/i, '.jpg');
+      setImageSrc(jpgSrc);
+    }
+  }, [src]);
+
+  // Progressive loading - load first 20 images immediately, rest with intersection observer
+  useEffect(() => {
+    if (priority || index < 20) {
+      setIsInView(true);
+      return;
+    }
+
+    if (!imgRef.current) return;
+
+    const currentElement = imgRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: "50px", // Start loading 50px before entering viewport
+        threshold: 0.01,
+      }
+    );
+
+    observer.observe(currentElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [priority, index, themeKey]);
+
+  const handleLoad = () => {
+    setIsLoaded(true);
+    setHasError(false);
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    // If HEIC fails, try to show placeholder or skip
+    if (imageSrc && imageSrc.toLowerCase().endsWith('.heic')) {
+      // Try alternative extensions
+      const altSrc = imageSrc.replace(/\.heic$/i, '.jpg');
+      if (altSrc !== imageSrc) {
+        setImageSrc(altSrc);
+        setHasError(false);
+      }
+    }
+  };
+
+  return (
+    <div
+      ref={imgRef}
+      className="relative aspect-square overflow-hidden"
+      style={{
+        willChange: isInView ? "opacity, transform" : "auto",
+        contain: "layout style paint",
+        opacity: isLoaded && !hasError ? 1 : 0,
+        transition: isLoaded && !hasError ? "opacity 0.3s ease-out" : "none",
+        transform: isLoaded && !hasError ? "translateZ(0)" : "translateZ(0) scale(0.98)",
+      }}
+    >
+      {isInView && !hasError && (
+        <img
+          src={imageSrc}
+          alt={alt}
+          className="w-full h-full object-cover"
+          decoding="async"
+          loading={priority || index < 20 ? "eager" : "lazy"}
+          fetchPriority={priority || index < 10 ? "high" : "low"}
+          onLoad={handleLoad}
+          onError={handleError}
+          style={{
+            transform: "translateZ(0)", // GPU acceleration
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
+        />
+      )}
+      {hasError && (
+        <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+          <span className="text-gray-400 text-xs">Image</span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Home = ({ theme }) => {
   const isMorning = theme === "morning";
@@ -62,62 +179,64 @@ const Home = ({ theme }) => {
     "/images/grid-50-main-page/z7333397196038_ecab1f39440509afb76f290cb32faab1.jpg",
   ];
 
-  // Grid with 50 images for morning tours - from grid-50-morning-tour folder (includes both JPG and HEIC)
+  // Grid with 50 images for morning tours - all converted to JPG format for browser compatibility
   const heroGridImagesMorning = [
     "/images/grid-50-morning-tour/35cc9279-756a-4992-bdce-88e8d32c6fa4.JPG",
     "/images/grid-50-morning-tour/5d13da6b-e1f9-4f91-b670-c3eb7326fdc3.JPG",
     "/images/grid-50-morning-tour/9abb2b6c-1c7b-46bd-be72-6b8feb91d7ba.JPG",
     "/images/grid-50-morning-tour/FFC41834-B99A-4935-B8E4-5D495008AB06.JPG",
     "/images/grid-50-morning-tour/IMG_8079.JPG",
-    "/images/grid-50-morning-tour/IMG_8088.HEIC",
-    "/images/grid-50-morning-tour/IMG_9022.HEIC",
+    "/images/grid-50-morning-tour/IMG_8088.jpg",
+    "/images/grid-50-morning-tour/IMG_9022.jpg",
     "/images/grid-50-morning-tour/IMG_9037.JPG",
     "/images/grid-50-morning-tour/IMG_9039.JPG",
     "/images/grid-50-morning-tour/IMG_9045.JPG",
     "/images/grid-50-morning-tour/IMG_9059.JPG",
     "/images/grid-50-morning-tour/IMG_9060.JPG",
-    "/images/grid-50-morning-tour/IMG_9226.HEIC",
-    "/images/grid-50-morning-tour/IMG_9267.HEIC",
-    "/images/grid-50-morning-tour/IMG_9273.HEIC",
-    "/images/grid-50-morning-tour/IMG_9276.HEIC",
-    "/images/grid-50-morning-tour/IMG_9304.HEIC",
+    "/images/grid-50-morning-tour/IMG_9226.jpg",
+    "/images/grid-50-morning-tour/IMG_9267.jpg",
+    "/images/grid-50-morning-tour/IMG_9273.jpg",
+    "/images/grid-50-morning-tour/IMG_9276.jpg",
+    "/images/grid-50-morning-tour/IMG_9304.jpg",
     "/images/grid-50-morning-tour/IMG_9312.JPG",
     "/images/grid-50-morning-tour/IMG_9313.JPG",
     "/images/grid-50-morning-tour/IMG_9316.JPG",
-    "/images/grid-50-morning-tour/IMG_9321.HEIC",
-    "/images/grid-50-morning-tour/IMG_9341.HEIC",
-    "/images/grid-50-morning-tour/IMG_9349.HEIC",
-    "/images/grid-50-morning-tour/IMG_9351.HEIC",
-    "/images/grid-50-morning-tour/IMG_9356.HEIC",
-    "/images/grid-50-morning-tour/IMG_9358.HEIC",
-    "/images/grid-50-morning-tour/IMG_9359.HEIC",
-    "/images/grid-50-morning-tour/IMG_9362.HEIC",
-    "/images/grid-50-morning-tour/IMG_9547.HEIC",
-    "/images/grid-50-morning-tour/IMG_9552.HEIC",
-    "/images/grid-50-morning-tour/IMG_9612.HEIC",
-    "/images/grid-50-morning-tour/IMG_9615.HEIC",
-    "/images/grid-50-morning-tour/IMG_9621.HEIC",
-    "/images/grid-50-morning-tour/IMG_9624.HEIC",
-    "/images/grid-50-morning-tour/IMG_9625.HEIC",
-    "/images/grid-50-morning-tour/IMG_9628.HEIC",
-    "/images/grid-50-morning-tour/IMG_9630.HEIC",
-    "/images/grid-50-morning-tour/IMG_9643.HEIC",
-    "/images/grid-50-morning-tour/IMG_9646.HEIC",
-    "/images/grid-50-morning-tour/IMG_9649.HEIC",
-    "/images/grid-50-morning-tour/IMG_9753.HEIC",
-    "/images/grid-50-morning-tour/IMG_9805.HEIC",
-    "/images/grid-50-morning-tour/IMG_9808.HEIC",
-    "/images/grid-50-morning-tour/IMG_9813.HEIC",
-    "/images/grid-50-morning-tour/IMG_9817.HEIC",
-    "/images/grid-50-morning-tour/IMG_9821.HEIC",
+    "/images/grid-50-morning-tour/IMG_9321.jpg",
+    "/images/grid-50-morning-tour/IMG_9341.jpg",
+    "/images/grid-50-morning-tour/IMG_9349.jpg",
+    "/images/grid-50-morning-tour/IMG_9351.jpg",
+    "/images/grid-50-morning-tour/IMG_9356.jpg",
+    "/images/grid-50-morning-tour/IMG_9358.jpg",
+    "/images/grid-50-morning-tour/IMG_9359.jpg",
+    "/images/grid-50-morning-tour/IMG_9362.jpg",
+    "/images/grid-50-morning-tour/IMG_9547.jpg",
+    "/images/grid-50-morning-tour/IMG_9552.jpg",
+    "/images/grid-50-morning-tour/IMG_9612.jpg",
+    "/images/grid-50-morning-tour/IMG_9615.jpg",
+    "/images/grid-50-morning-tour/IMG_9621.jpg",
+    "/images/grid-50-morning-tour/IMG_9624.jpg",
+    "/images/grid-50-morning-tour/IMG_9625.jpg",
+    "/images/grid-50-morning-tour/IMG_9628.jpg",
+    "/images/grid-50-morning-tour/IMG_9630.jpg",
+    "/images/grid-50-morning-tour/IMG_9643.jpg",
+    "/images/grid-50-morning-tour/IMG_9646.jpg",
+    "/images/grid-50-morning-tour/IMG_9649.jpg",
+    "/images/grid-50-morning-tour/IMG_9753.jpg",
+    "/images/grid-50-morning-tour/IMG_9805.jpg",
+    "/images/grid-50-morning-tour/IMG_9808.jpg",
+    "/images/grid-50-morning-tour/IMG_9813.jpg",
+    "/images/grid-50-morning-tour/IMG_9817.jpg",
+    "/images/grid-50-morning-tour/IMG_9821.jpg",
     "/images/grid-50-morning-tour/att.ACwzcvt4CGu5YxjHK6pd-EW7GNbiVDe7znJAYRUtNfo.JPG",
     "/images/grid-50-morning-tour/att.B5CoERhy2b33kBpVgHfsTT-kYdOo6_En4CkdVRFKENU.JPG",
     "/images/grid-50-morning-tour/att.Hhr_tAdz5nkuJfZmEkkh9xSDHEhB0UsPyKOwliO3Irc.JPG",
     "/images/grid-50-morning-tour/att.f3DYZzTkNyeUO7EaaTe3qfmT8HX6OxO40okZ6aGEvSk.JPG",
   ];
 
-  // Select grid images based on theme
-  const heroGridImages = isMorning ? heroGridImagesMorning : heroGridImagesNight;
+  // Select grid images based on theme and memoize to prevent unnecessary re-renders
+  const visibleImages = useMemo(() => {
+    return isMorning ? heroGridImagesMorning : heroGridImagesNight;
+  }, [isMorning]);
 
   const tours = isMorning
     ? [
@@ -175,48 +294,35 @@ const Home = ({ theme }) => {
 
   return (
     <>
-      {/* Hero Section with 50 Image Grid */}
+      {/* Hero Section with 50 Image Grid - Optimized */}
       <section className="relative w-full min-h-[70vh] sm:min-h-[75vh] md:min-h-[80vh] lg:min-h-[85vh] overflow-hidden -mt-8 sm:-mt-6 md:-mt-6">
-        {/* Grid with 50 images */}
-        <div className="absolute inset-0 grid grid-cols-5 sm:grid-cols-7 md:grid-cols-8 lg:grid-cols-10 gap-0">
-          {heroGridImages.map((image, index) => (
-            <div
-              key={index}
-              className="relative aspect-square overflow-hidden opacity-0 animate-fadeIn"
-              style={{
-                animationDelay: `${index * 0.05}s`,
-                animationFillMode: 'forwards'
-              }}
-            >
-              <img
-                src={image}
-                alt={`Saigon ${isMorning ? "Morning" : "Night"} ${index + 1}`}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
+        {/* Grid with 50 images - Optimized with lazy loading and progressive rendering */}
+        <div 
+          className="absolute inset-0 grid grid-cols-5 sm:grid-cols-7 md:grid-cols-8 lg:grid-cols-10 gap-0"
+          style={{
+            contain: "layout style paint",
+            transform: "translateZ(0)", // GPU acceleration
+            willChange: "contents",
+          }}
+        >
+          {visibleImages.map((image, index) => (
+            <LazyImage
+              key={`${isMorning ? 'morning' : 'night'}-${index}`}
+              src={image}
+              alt={`Saigon ${isMorning ? "Morning" : "Night"} ${index + 1}`}
+              index={index}
+              priority={index < 15} // First 15 images are priority
+              themeKey={isMorning ? 'morning' : 'night'} // Force reset when theme changes
+            />
           ))}
         </div>
         
-        {/* CSS Animation for fade-in effect */}
-        <style>{`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: scale(0.95);
-            }
-            to {
-              opacity: 1;
-              transform: scale(1);
-            }
-          }
-          .animate-fadeIn {
-            animation: fadeIn 0.6s ease-out;
-          }
-        `}</style>
-        
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40" />
+        {/* Adaptive overlay for better text readability based on theme */}
+        <div 
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            isMorning ? "bg-white/20" : "bg-black/40"
+          }`}
+        />
 
         {/* Content */}
         <div className="relative min-h-[70vh] sm:min-h-[75vh] md:min-h-[80vh] lg:min-h-[85vh] flex items-center justify-center z-10 px-4 sm:px-6">

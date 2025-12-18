@@ -1,0 +1,5 @@
+# Requirements for HEIC to JPG conversion script
+# Install with: pip install -r requirements-heic.txt
+
+Pillow>=10.0.0
+pillow-heif>=0.13.0
