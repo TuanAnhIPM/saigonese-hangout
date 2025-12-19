@@ -352,14 +352,14 @@ const Home = ({ theme }) => {
             </p>
             
             <Link
-              to="/insider"
+              to="/top1"
               className={`inline-block text-xs sm:text-sm px-4 py-2 rounded-lg font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5016] focus-visible:ring-offset-2 ${
                 isMorning
                   ? "bg-[#2d5016] text-white hover:bg-[#3a7d2f]"
                   : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
               }`}
             >
-              🏆 #1 Tours & Expert Guides in Saigon
+              🇻🇳 Meet Our Passionate Team
             </Link>
           </div>
         </div>
