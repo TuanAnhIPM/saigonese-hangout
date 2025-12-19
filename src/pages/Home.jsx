@@ -523,11 +523,13 @@ const Home = ({ theme }) => {
           <div className={`${isMorning ? "bg-blue-50 border-blue-200" : "bg-blue-900/20 border-blue-500/30"} border-2 rounded-2xl p-6 sm:p-8`}>
             <div className="flex flex-col items-center sm:items-start gap-4">
               <div className="flex-shrink-0">
-                <img 
-                  src="/images/east-card-partner.jpeg" 
-                  alt="East Card Partner" 
-                  className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg sm:rounded-xl shadow-md"
-                />
+                <a href="https://eastcardil.co.il" target="_blank" rel="noreferrer" className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <img 
+                    src="/images/east-card-partner.jpeg" 
+                    alt="East Card Partner" 
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg sm:rounded-xl shadow-md"
+                  />
+                </a>
               </div>
               <div className="text-center sm:text-left flex-1">
                 <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
@@ -544,11 +546,13 @@ const Home = ({ theme }) => {
           <div className={`${isMorning ? "bg-blue-50 border-blue-200" : "bg-blue-900/20 border-blue-500/30"} border-2 rounded-2xl p-6 sm:p-8`}>
             <div className="flex flex-col items-center sm:items-start gap-4">
               <div className="flex-shrink-0">
-                <img 
-                  src="/images/tcg-logo.gif" 
-                  alt="TCG Australia Partner" 
-                  className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
-                />
+                <a href="https://travelcationgroup.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <img 
+                    src="/images/tcg-logo.gif" 
+                    alt="TCG Australia Partner" 
+                    className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
+                  />
+                </a>
               </div>
               <div className="text-center sm:text-left flex-1">
                 <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
@@ -565,11 +569,13 @@ const Home = ({ theme }) => {
           <div className={`${isMorning ? "bg-green-50 border-green-200" : "bg-green-900/20 border-green-500/30"} border-2 rounded-2xl p-6 sm:p-8`}>
             <div className="flex flex-col items-center sm:items-start gap-4">
               <div className="flex-shrink-0">
-                <img 
-                  src="/images/give-asia-logo.png" 
-                  alt="Give Asia Logo" 
-                  className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
-                />
+                <a href="https://give.asia" target="_blank" rel="noreferrer" className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <img 
+                    src="/images/give-asia-logo.png" 
+                    alt="Give Asia Logo" 
+                    className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
+                  />
+                </a>
               </div>
               <div className="text-center sm:text-left flex-1">
                 <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
