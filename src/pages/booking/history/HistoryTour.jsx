@@ -43,8 +43,8 @@ const HistoryTour = () => {
           <div>
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-4xl font-bold text-blue-600">$30</span>
-                <span className="text-lg text-gray-600">per person • ~750,000₫ • 4 hours</span>
+                <span className="text-4xl font-bold text-blue-600">$40</span>
+                <span className="text-lg text-gray-600">per person • ~1,000,000₫ • 4 hours</span>
               </div>
               
               <h2 className="text-2xl font-bold mb-6 text-gray-800">What's Included:</h2>
@@ -249,7 +249,7 @@ const HistoryTour = () => {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
                 >
-                  Book History Tour - $30
+                  Book History Tour - $40
                 </button>
 
                 {/* PayPal Payment */}
@@ -259,9 +259,9 @@ const HistoryTour = () => {
                     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                       <input type="hidden" name="cmd" value="_xclick" />
                       <input type="hidden" name="business" value="thestoriesguys@gmail.com" />
-                      <input type="hidden" name="item_name" value="History Tour - 750,000 VND per person" />
+                      <input type="hidden" name="item_name" value="History Tour - 1,000,000 VND per person" />
                       <input type="hidden" name="currency_code" value="USD" />
-                      <input type="hidden" name="amount" value="30.00" />
+                      <input type="hidden" name="amount" value="40.00" />
                       <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
                       <input type="hidden" name="cancel_return" value="https://saigonese-hangout.com/booking/history" />
                       <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" />

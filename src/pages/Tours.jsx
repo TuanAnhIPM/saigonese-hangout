@@ -11,8 +11,8 @@ const Tours = ({ theme }) => {
       tours: [
         {
           title: "History Tour",
-          price: "$24",
-          originalPrice: "$30",
+          price: "$34",
+          originalPrice: "$40",
           duration: "4 hours",
           desc: "Walk through Saigon's past: colonial architecture, war history, and local culture at 10 iconic locations.",
           img: "/images/morning-tours/history-tour/background.jpg",
@@ -33,8 +33,8 @@ const Tours = ({ theme }) => {
       tours: [
         {
           title: "Street Food Tour on Scooter",
-          price: "$39",
-          originalPrice: "$49",
+          price: "$49",
+          originalPrice: "$59",
           duration: "4 hours",
           desc: "New to Saigon? We solve what to eat, how much to pay, and where to go safely.",
           img: "/images/night-tours/street-food-tour/munchies-bg.jpg",

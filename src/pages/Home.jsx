@@ -242,8 +242,8 @@ const Home = ({ theme }) => {
     ? [
         {
           title: "History Tour",
-          price: "$24",
-          originalPrice: "$30",
+          price: "$34",
+          originalPrice: "$40",
           duration: "4 hours",
           desc: "Walk through Saigon's past: colonial architecture, war history, and local culture at 10 iconic locations.",
           slug: "history",
@@ -267,8 +267,8 @@ const Home = ({ theme }) => {
     : [
         {
           title: "Street Food Tour on Scooter",
-          price: "$39",
-          originalPrice: "$49",
+          price: "$49",
+          originalPrice: "$59",
           duration: "4 hours",
           desc: "New to Saigon? We solve what to eat, how much to pay, and where to go safely.",
           slug: "streetfood",
@@ -359,7 +359,7 @@ const Home = ({ theme }) => {
                   : "bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] text-white hover:opacity-90 focus-visible:ring-[#4cc9f0]"
               }`}
             >
-              💡 Unlock Insider Tips for $4.99
+              🏆 #1 Tours & Expert Guides in Saigon
             </Link>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import CountdownTimer from "./CountdownTimer.jsx";
 
 const TourCard = ({ title, desc, price, originalPrice, duration, highlights, faqInfo, theme, slug }) => {
   // Check if this tour should have Basic and Premium options (removed streetfood)
@@ -83,6 +84,15 @@ const TourCard = ({ title, desc, price, originalPrice, duration, highlights, faq
             </h3>
           </Link>
           
+          {/* Countdown Timer for Street Food Tour */}
+          {slug === "streetfood" && originalPrice && (
+            <div className="mb-3 flex justify-center">
+              <CountdownTimer 
+                endDate="2025-12-22T23:59:59" 
+                theme={theme}
+              />
+            </div>
+          )}
 
           {/* Description */}
           {desc && (

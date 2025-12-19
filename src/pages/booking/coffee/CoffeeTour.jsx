@@ -43,7 +43,7 @@ const CoffeeTour = () => {
           <div>
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-4xl font-bold text-amber-600">$35</span>
+                <span className="text-4xl font-bold text-amber-600">$45</span>
                 <span className="text-lg text-gray-600">per person • 2.5 hours</span>
               </div>
               
@@ -251,7 +251,7 @@ const CoffeeTour = () => {
                   type="submit"
                   className="w-full py-4 px-6 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-semibold text-lg transition-all mb-4"
                 >
-                  Book Coffee Tour - $35
+                  Book Coffee Tour - $45
                 </button>
 
                 {/* PayPal Payment */}
@@ -261,9 +261,9 @@ const CoffeeTour = () => {
                     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                       <input type="hidden" name="cmd" value="_xclick" />
                       <input type="hidden" name="business" value="thestoriesguys@gmail.com" />
-                      <input type="hidden" name="item_name" value="Coffee & Market Tour - $35 per person" />
+                      <input type="hidden" name="item_name" value="Coffee & Market Tour - $45 per person" />
                       <input type="hidden" name="currency_code" value="USD" />
-                      <input type="hidden" name="amount" value="35.00" />
+                      <input type="hidden" name="amount" value="45.00" />
                       <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
                       <input type="hidden" name="cancel_return" value="https://saigonese-hangout.com/booking/coffee" />
                       <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" />
