@@ -518,10 +518,10 @@ const Home = ({ theme }) => {
 
       {/* Partnership Section */}
       <section className="max-w-6xl mx-auto py-8 sm:py-12 px-4 sm:px-6 fade-in">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {/* B2B Partner */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {/* B2B Partner - East Card */}
           <div className={`${isMorning ? "bg-blue-50 border-blue-200" : "bg-blue-900/20 border-blue-500/30"} border-2 rounded-2xl p-6 sm:p-8`}>
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-4">
+            <div className="flex flex-col items-center sm:items-start gap-4">
               <div className="flex-shrink-0">
                 <img 
                   src="/images/east-card-partner.jpeg" 
@@ -530,13 +530,32 @@ const Home = ({ theme }) => {
                 />
               </div>
               <div className="text-center sm:text-left flex-1">
-                <h3 className={`text-xl sm:text-2xl font-bold mb-2 sm:mb-3 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
-                  Official B2B Partner
+                <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
+                  B2B Partner
                 </h3>
-                <p className={`text-sm sm:text-base leading-relaxed ${isMorning ? "text-gray-700" : "text-gray-200"}`}>
-                  Saigonese Hang-out is a trusted <span className="font-semibold">B2B partner of East Card</span>, 
-                  providing exclusive Food Tours for Israeli travelers visiting Saigon. 
-                  Our partnership ensures authentic experiences and professional service for international visitors.
+                <p className={`text-xs sm:text-sm leading-relaxed ${isMorning ? "text-gray-700" : "text-gray-200"}`}>
+                  Trusted partner of <span className="font-semibold">East Card</span>, providing exclusive Food Tours for Israeli travelers visiting Saigon.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* B2B Partner - TCG */}
+          <div className={`${isMorning ? "bg-blue-50 border-blue-200" : "bg-blue-900/20 border-blue-500/30"} border-2 rounded-2xl p-6 sm:p-8`}>
+            <div className="flex flex-col items-center sm:items-start gap-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/tcg-logo.gif" 
+                  alt="TCG Australia Partner" 
+                  className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
+                />
+              </div>
+              <div className="text-center sm:text-left flex-1">
+                <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
+                  B2B Partner
+                </h3>
+                <p className={`text-xs sm:text-sm leading-relaxed ${isMorning ? "text-gray-700" : "text-gray-200"}`}>
+                  Proud partner of <span className="font-semibold">TCG Australia</span>, delivering premium tour experiences for Australian travelers exploring Saigon.
                 </p>
               </div>
             </div>
@@ -544,7 +563,7 @@ const Home = ({ theme }) => {
 
           {/* Give Asia Donation */}
           <div className={`${isMorning ? "bg-green-50 border-green-200" : "bg-green-900/20 border-green-500/30"} border-2 rounded-2xl p-6 sm:p-8`}>
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-4">
+            <div className="flex flex-col items-center sm:items-start gap-4">
               <div className="flex-shrink-0">
                 <img 
                   src="/images/give-asia-logo.png" 
@@ -553,12 +572,11 @@ const Home = ({ theme }) => {
                 />
               </div>
               <div className="text-center sm:text-left flex-1">
-                <h3 className={`text-xl sm:text-2xl font-bold mb-2 sm:mb-3 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
-                  Giving Back to Community
+                <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isMorning ? "text-[#2d5016]" : "text-white"}`}>
+                  Giving Back
                 </h3>
-                <p className={`text-sm sm:text-base leading-relaxed ${isMorning ? "text-gray-700" : "text-gray-200"}`}>
-                  <span className="font-semibold">10% of tour proceeds are donated to Give Asia</span> - Southeast Asia's largest charity foundation. 
-                  When you join our tours, you're contributing to meaningful charitable projects in the region.
+                <p className={`text-xs sm:text-sm leading-relaxed ${isMorning ? "text-gray-700" : "text-gray-200"}`}>
+                  <span className="font-semibold">10% of tour proceeds</span> are donated to <span className="font-semibold">Give.Asia</span>, Asia's leading free fundraising platform. Founded in 2009, they have helped over 20,000 campaigns across APAC, raising more than SGD$100 million for meaningful causes.
                 </p>
               </div>
             </div>

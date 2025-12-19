@@ -320,10 +320,10 @@ const InsiderTips = ({ theme }) => {
                 <span className="text-2xl">🤝</span>
                 <div>
                   <h4 className={`font-bold text-sm mb-1 ${textColor}`}>
-                    Official B2B Partner
+                    Official B2B Partners
                   </h4>
                   <p className={`text-xs leading-relaxed ${mutedColor}`}>
-                    Trusted partner of <span className="font-semibold">East Card</span>, providing exclusive Food Tours for Israeli travelers visiting Saigon.
+                    Trusted partners of <span className="font-semibold">East Card</span> and <span className="font-semibold">TCG Australia</span>, providing exclusive Food Tours for international travelers visiting Saigon.
                   </p>
                 </div>
               </div>
