@@ -79,3 +79,13 @@ sudo apt-get install libheif-dev
 # Sau đó cài lại
 pip install pillow-heif
 ```
+
+
+
+
+
+
+
+
+
+
