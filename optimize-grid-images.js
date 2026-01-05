@@ -6,7 +6,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const gridDir = path.join(__dirname, 'public', 'images', 'grid-50-morning-tour');
+// Get directory from command line argument or use default
+const targetDir = process.argv[2] || 'grid-50-morning-tour';
+const gridDir = path.join(__dirname, 'public', 'images', targetDir);
 const maxWidth = 400; // Max width for grid images (smaller = faster)
 const quality = 75; // JPEG quality (lower = smaller file size)
 

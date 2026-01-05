@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "optimize:grid": "node optimize-grid-images.js"
+    "optimize:grid": "node optimize-grid-images.js",
+    "optimize:grid:morning": "node optimize-grid-images.js grid-50-morning-tour",
+    "optimize:grid:night": "node optimize-grid-images.js grid-50-main-page"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^8.9.2",
