@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from "../components/Footer.jsx";
 
 const Saigonir = ({ theme }) => {
@@ -7,6 +7,8 @@ const Saigonir = ({ theme }) => {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showOrderForm, setShowOrderForm] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null); // State for lightbox
+  const [selectedReviewImage, setSelectedReviewImage] = useState(null); // State for review image lightbox
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     phone: '',
@@ -26,6 +28,11 @@ const Saigonir = ({ theme }) => {
         "/images/sourvenirs/shirts/shirt2.jpg",
         "/images/sourvenirs/shirts/shirt3.jpg"
       ],
+      reviews: [
+        // Add review images for shirts here - user will add them
+        // Example: "/images/reviews/shirt-review1.jpg",
+        // "/images/reviews/shirt-review2.jpg",
+      ],
       category: "Apparel",
       sizes: ["L", "XL", "2XL", "3XL"],
       colors: ["Black"]
@@ -43,6 +50,11 @@ const Saigonir = ({ theme }) => {
         "/images/sourvenirs/coffee/5.jpg",
         "/images/sourvenirs/coffee/6.jpg",
       ],
+      reviews: [
+        "/images/sourvenirs/coffee/reviews/z7375673319228_b02be1492cca2012a1a01f51a164e973.jpg",
+        "/images/sourvenirs/coffee/reviews/z7375673336287_df5dd4934a68445efa8d800c0938f9a2.jpg",
+        "/images/sourvenirs/coffee/reviews/z7375673336288_c71fb3c807e003e0764aaa7e029c4746.jpg",
+      ],
       category: "Food & Beverages",
       weight: "500g",
       origin: "Central Highlands, Vietnam"
@@ -57,6 +69,7 @@ const Saigonir = ({ theme }) => {
         "/images/sourvenirs/hat/3.png",
         "/images/sourvenirs/hat/1.png",
       ],
+      reviews: [],
       category: "Hat",
       weight: "5g",
     }
@@ -148,6 +161,16 @@ const Saigonir = ({ theme }) => {
     setShowCart(false);
   };
 
+  // Handle ESC key to close lightbox
+  useEffect(() => {
+    if (!selectedImage) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setSelectedImage(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedImage]);
+
   const ProductCard = ({ product }) => {
     const [selectedOptions, setSelectedOptions] = useState({});
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -163,11 +186,16 @@ const Saigonir = ({ theme }) => {
     };
 
     const handleImageClick = () => {
-      if (product.images && product.images.length > 2) {
-        setCurrentImageIndex((prevIndex) => 
-          prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
-        );
-      }
+      // Open lightbox with current image and product reviews
+      const imageSrc = product.images ? product.images[currentImageIndex] : product.image;
+      const allImages = product.images || [product.image];
+      setSelectedImage({
+        src: imageSrc,
+        allImages: allImages,
+        currentIndex: currentImageIndex,
+        productName: product.name,
+        reviews: product.reviews || []
+      });
     };
 
   return (
@@ -207,10 +235,10 @@ const Saigonir = ({ theme }) => {
           )}
           
           {/* Hover overlay with instructions */}
-          {product.images && product.images.length > 1 && (
+          {product.images && product.images.length > 0 && (
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <div className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
-                Click to view more
+                Click to enlarge
               </div>
             </div>
           )}
@@ -740,7 +768,148 @@ const Saigonir = ({ theme }) => {
     </div>
       )}
 
-      <Footer />
+      {/* Image Lightbox Modal with Reviews */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
+          onClick={() => {
+            setSelectedImage(null);
+            setSelectedReviewImage(null);
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div 
+            className="w-full max-w-7xl max-h-[90vh] flex flex-col lg:flex-row gap-4 lg:gap-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              type="button"
+              className="absolute top-4 right-4 text-white/90 hover:text-white text-3xl sm:text-4xl font-bold z-10 transition-all hover:scale-110"
+              aria-label="Close"
+              onClick={() => {
+                setSelectedImage(null);
+                setSelectedReviewImage(null);
+              }}
+            >
+              ×
+            </button>
+
+            {/* Left Side - Reviews Section */}
+            {selectedImage.reviews && selectedImage.reviews.length > 0 && (
+              <div className="w-full lg:w-1/3 bg-black/40 rounded-lg p-4 overflow-y-auto max-h-[90vh]">
+                <h3 className={`text-lg font-bold mb-4 ${isMorning ? "text-white" : "text-white"}`}>
+                  Customer Reviews
+                </h3>
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
+                  {selectedImage.reviews.map((reviewImg, index) => (
+                    <div
+                      key={index}
+                      className="cursor-pointer group rounded-lg overflow-hidden hover:scale-105 transition-all duration-300"
+                      onClick={() => setSelectedReviewImage(reviewImg)}
+                    >
+                      <img
+                        src={reviewImg}
+                        alt={`Review ${index + 1}`}
+                        className="w-full h-auto object-cover rounded-lg"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Right Side - Product Image */}
+            <div className={`w-full flex items-center justify-center relative bg-black/40 rounded-lg p-4 lg:p-8 ${selectedImage.reviews && selectedImage.reviews.length > 0 ? 'lg:w-2/3' : 'lg:w-full'}`}>
+              {/* Previous button */}
+              {selectedImage.allImages.length > 1 && (
+                <button
+                  type="button"
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/90 hover:text-white text-2xl sm:text-3xl font-bold z-10 bg-black/50 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all hover:bg-black/70 hover:scale-110"
+                  aria-label="Previous image"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const newIndex = selectedImage.currentIndex > 0 
+                      ? selectedImage.currentIndex - 1 
+                      : selectedImage.allImages.length - 1;
+                    setSelectedImage({
+                      ...selectedImage,
+                      src: selectedImage.allImages[newIndex],
+                      currentIndex: newIndex
+                    });
+                  }}
+                >
+                  ‹
+                </button>
+              )}
+
+              {/* Product Image */}
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.productName || "Product image"}
+                className="max-h-[80vh] max-w-full object-contain rounded-lg shadow-2xl"
+              />
+
+              {/* Next button */}
+              {selectedImage.allImages.length > 1 && (
+                <button
+                  type="button"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/90 hover:text-white text-2xl sm:text-3xl font-bold z-10 bg-black/50 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all hover:bg-black/70 hover:scale-110"
+                  aria-label="Next image"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const newIndex = selectedImage.currentIndex < selectedImage.allImages.length - 1
+                      ? selectedImage.currentIndex + 1
+                      : 0;
+                    setSelectedImage({
+                      ...selectedImage,
+                      src: selectedImage.allImages[newIndex],
+                      currentIndex: newIndex
+                    });
+                  }}
+                >
+                  ›
+                </button>
+              )}
+
+              {/* Image counter */}
+              {selectedImage.allImages.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/50 px-4 py-2 rounded-full text-sm">
+                  {selectedImage.currentIndex + 1} / {selectedImage.allImages.length}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Image Lightbox */}
+      {selectedReviewImage && (
+        <div
+          className="fixed inset-0 z-[70] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setSelectedReviewImage(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            className="absolute top-4 right-4 text-white/90 hover:text-white text-3xl sm:text-4xl font-bold z-10 transition-all hover:scale-110"
+            aria-label="Close"
+            onClick={() => setSelectedReviewImage(null)}
+          >
+            ×
+          </button>
+          <img
+            src={selectedReviewImage}
+            alt="Review"
+            className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
+      <Footer theme={theme} />
     </>
   );
 };

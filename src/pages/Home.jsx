@@ -18,7 +18,7 @@ const LazyImage = ({ src, alt, index, priority = false, themeKey }) => {
     setIsLoaded(false);
     setHasError(false);
     setImageSrc(src);
-    if (priority || index < 20) {
+    if (priority || index < 10) {
       setIsInView(true);
     } else {
       setIsInView(false);
@@ -34,9 +34,9 @@ const LazyImage = ({ src, alt, index, priority = false, themeKey }) => {
     }
   }, [src]);
 
-  // Progressive loading - load first 20 images immediately, rest with intersection observer
+  // Progressive loading - load first 10 images immediately, rest with intersection observer
   useEffect(() => {
-    if (priority || index < 20) {
+    if (priority || index < 10) {
       setIsInView(true);
       return;
     }
@@ -54,7 +54,7 @@ const LazyImage = ({ src, alt, index, priority = false, themeKey }) => {
         });
       },
       {
-        rootMargin: "50px", // Start loading 50px before entering viewport
+        rootMargin: "100px", // Start loading 100px before entering viewport (increased for smoother experience)
         threshold: 0.01,
       }
     );
@@ -102,8 +102,8 @@ const LazyImage = ({ src, alt, index, priority = false, themeKey }) => {
           alt={alt}
           className="w-full h-full object-cover"
           decoding="async"
-          loading={priority || index < 20 ? "eager" : "lazy"}
-          fetchPriority={priority || index < 10 ? "high" : "low"}
+          loading={priority || index < 10 ? "eager" : "lazy"}
+          fetchPriority={priority || index < 5 ? "high" : "low"}
           onLoad={handleLoad}
           onError={handleError}
           style={{
@@ -303,6 +303,7 @@ const Home = ({ theme }) => {
             contain: "layout style paint",
             transform: "translateZ(0)", // GPU acceleration
             willChange: "contents",
+            contentVisibility: "auto", // Skip rendering off-screen content
           }}
         >
           {visibleImages.map((image, index) => (
@@ -311,7 +312,7 @@ const Home = ({ theme }) => {
               src={image}
               alt={`Saigon ${isMorning ? "Morning" : "Night"} ${index + 1}`}
               index={index}
-              priority={index < 15} // First 15 images are priority
+              priority={index < 10} // First 10 images are priority (reduced for faster initial load)
               themeKey={isMorning ? 'morning' : 'night'} // Force reset when theme changes
             />
           ))}
@@ -525,7 +526,7 @@ const Home = ({ theme }) => {
               <div className="flex-shrink-0">
                 <a href="https://eastcardil.co.il" target="_blank" rel="noreferrer" className="cursor-pointer hover:opacity-80 transition-opacity">
                   <img 
-                    src="/images/east-card-partner.jpeg" 
+                    src="/images/partners/east-card-logo.jpeg" 
                     alt="East Card Partner" 
                     className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg sm:rounded-xl shadow-md"
                   />
@@ -548,7 +549,7 @@ const Home = ({ theme }) => {
               <div className="flex-shrink-0">
                 <a href="https://travelcationgroup.com" target="_blank" rel="noreferrer" className="cursor-pointer hover:opacity-80 transition-opacity">
                   <img 
-                    src="/images/tcg-logo.gif" 
+                    src="/images/partners/tcg-logo.gif" 
                     alt="TCG Australia Partner" 
                     className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
                   />
@@ -571,7 +572,7 @@ const Home = ({ theme }) => {
               <div className="flex-shrink-0">
                 <a href="https://give.asia" target="_blank" rel="noreferrer" className="cursor-pointer hover:opacity-80 transition-opacity">
                   <img 
-                    src="/images/give-asia-logo.png" 
+                    src="/images/partners/give-asia-logo.png" 
                     alt="Give Asia Logo" 
                     className="w-32 h-16 sm:w-40 sm:h-20 object-contain"
                   />
