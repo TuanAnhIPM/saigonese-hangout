@@ -40,7 +40,7 @@ const Tours = ({ theme }) => {
           img: "/images/night-tours/street-food-tour/munchies-bg.jpg",
           slug: "streetfood",
           faqInfo: {
-            price: "999,000 VND",
+            price: "1,250,000 VND",
             stops: "5 stops",
             dishes: "11 dishes",
             transportation: "Go on scooters (1 person 1 driver)",
