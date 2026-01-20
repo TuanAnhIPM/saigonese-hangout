@@ -58,7 +58,7 @@ const PremiumStreetFood = () => {
                   <span className="text-xl font-medium text-gray-400 line-through">$59</span>
                   <span className="text-4xl font-bold text-purple-600">$49</span>
                 </div>
-                <span className="text-lg text-gray-600">per person • 999,000₫ • 4 hours</span>
+                <span className="text-lg text-gray-600">per person • 1,250,000₫ • 4 hours</span>
               </div>
               
               <h2 className="text-2xl font-bold mb-6 text-gray-800">What's Included:</h2>
@@ -257,7 +257,7 @@ const PremiumStreetFood = () => {
                   type="submit"
                   className="w-full bg-purple-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-purple-700 transition-colors"
                 >
-                  Book Street Food Tour - $49 (999,000₫)
+                  Book Street Food Tour - $49 (1,250,000₫)
                 </button>
 
                 {/* PayPal Payment */}
@@ -267,7 +267,7 @@ const PremiumStreetFood = () => {
                     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                       <input type="hidden" name="cmd" value="_xclick" />
                       <input type="hidden" name="business" value="thestoriesguys@gmail.com" />
-                      <input type="hidden" name="item_name" value="Street Food Tour - $49 (999,000₫) per person" />
+                      <input type="hidden" name="item_name" value="Street Food Tour - $49 (1,250,000₫) per person" />
                       <input type="hidden" name="currency_code" value="USD" />
                       <input type="hidden" name="amount" value="49.00" />
                       <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
