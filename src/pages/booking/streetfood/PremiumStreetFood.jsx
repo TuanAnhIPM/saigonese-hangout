@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CountdownTimer from '../../../components/CountdownTimer.jsx';
 
 const PremiumStreetFood = () => {
+  const navigate = useNavigate();
   const [bookingForm, setBookingForm] = useState({
     name: '',
     email: '',
@@ -10,10 +12,44 @@ const PremiumStreetFood = () => {
     guests: 1,
     message: ''
   });
-  const paypalButtonRef = useRef(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [hasClickedPayPal, setHasClickedPayPal] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Validate date input
+    if (name === 'date') {
+      if (!value) {
+        setBookingForm(prev => ({
+          ...prev,
+          [name]: value
+        }));
+        return;
+      }
+      
+      // Input type="date" always returns YYYY-MM-DD format
+      // But we validate it properly
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(value)) {
+        return; // Don't update if invalid format
+      }
+      
+      // Parse and validate the date
+      const [year, month, day] = value.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      
+      // Check if date is valid (not invalid date like 2026-13-45)
+      if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        return; // Don't update if invalid date
+      }
+      
+      // Check if date is within valid range (2026-2030)
+      if (year < 2026 || year > 2030) {
+        return; // Don't update if out of range
+      }
+    }
+    
     setBookingForm(prev => ({
       ...prev,
       [name]: value
@@ -22,49 +58,73 @@ const PremiumStreetFood = () => {
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
-    alert('Booking submitted for Premium Street Food Tour! We\'ll contact you soon.');
-    window.location.href = '/booking/success';
-  };
-
-  useEffect(() => {
-    const renderPayPalButton = () => {
-      if (!paypalButtonRef.current || !window.PayPal || !window.PayPal.HostedButtons) {
+    
+    // Validate date before submitting
+    if (bookingForm.date) {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(bookingForm.date)) {
+        alert('Please enter a valid date in format YYYY-MM-DD');
         return;
       }
       
-      // Clear any existing buttons
-      paypalButtonRef.current.innerHTML = '';
-      
-      window.PayPal.HostedButtons.render({
-        hostedButtonId: 'W6KYF94SER9ML'
-      }, paypalButtonRef.current).catch((err) => {
-        console.error('Error rendering PayPal hosted button:', err);
-      });
-    };
-
-    // Check if script already exists
-    const existingScript = document.querySelector('script[src*="paypal.com/sdk/js"]');
-    if (existingScript && window.PayPal) {
-      setTimeout(renderPayPalButton, 100);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://www.paypal.com/sdk/js?client-id=BAAbjwCQd2Vdd59eqsfoRs9fxVGOQC85iqHq-L66VtN_2jSFu0aEpDz7QS1jHgEOT_2NOjKNxiZkmKIq64&components=hosted-buttons&disable-funding=venmo&currency=USD';
-    script.async = true;
-    
-    script.onload = () => {
-      if (window.PayPal && paypalButtonRef.current) {
-        renderPayPalButton();
+      const date = new Date(bookingForm.date);
+      const year = date.getFullYear();
+      if (isNaN(date.getTime()) || year < 2026 || year > 2030) {
+        alert('Please select a date between 2026 and 2030');
+        return;
       }
-    };
+    }
+    
+    // Send booking information to WhatsApp
+    let message = "🍜 *NEW BOOKING - Street Food Tour on Scooter*\n\n";
+    message += `👤 *Customer Information:*\n`;
+    message += `Name: ${bookingForm.name}\n`;
+    message += `Email: ${bookingForm.email}\n`;
+    message += `Phone: ${bookingForm.phone}\n`;
+    message += `Preferred Date: ${bookingForm.date}\n`;
+    message += `Number of Guests: ${bookingForm.guests}\n`;
+    if (bookingForm.message) {
+      message += `Special Requests: ${bookingForm.message}\n`;
+    }
+    
+    message += `\n📋 *Tour Details:*\n`;
+    message += `Tour: Street Food Tour on Scooter\n`;
+    message += `Price: $49 (1,250,000₫) per person\n`;
+    message += `Duration: 4 hours\n`;
+    message += `Total: $${49 * bookingForm.guests} (${(1250000 * bookingForm.guests).toLocaleString('vi-VN')}₫)\n\n`;
+    message += `Thank you for choosing Saigonese Hang-out! 🇻🇳`;
 
-    script.onerror = () => {
-      console.error('Failed to load PayPal SDK');
-    };
+    const whatsappUrl = `https://wa.me/+84978270038?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    
+    // Reset PayPal click state
+    setHasClickedPayPal(false);
+    
+    // Show success modal
+    setShowSuccessModal(true);
+    
+    // Reset form after showing success
+    setBookingForm({
+      name: '',
+      email: '',
+      phone: '',
+      date: '',
+      guests: 1,
+      message: ''
+    });
+  };
 
-    document.body.appendChild(script);
-  }, []);
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    setHasClickedPayPal(false);
+    navigate('/');
+  };
+
+  const handlePayPalClick = () => {
+    window.open('https://www.paypal.com/ncp/payment/W6KYF94SER9ML', '_blank');
+    setHasClickedPayPal(true);
+  };
+
 
   return (
     <div className="min-h-screen pb-8">
@@ -211,9 +271,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 font-medium"
                     placeholder="Enter your full name"
-                    style={{ pointerEvents: 'auto' }}
+                    style={{ pointerEvents: 'auto', color: '#111827', backgroundColor: '#ffffff' }}
                   />
                 </div>
 
@@ -227,9 +287,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 font-medium"
                     placeholder="Enter your email"
-                    style={{ pointerEvents: 'auto' }}
+                    style={{ pointerEvents: 'auto', color: '#111827', backgroundColor: '#ffffff' }}
                   />
                 </div>
 
@@ -243,9 +303,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 font-medium"
                     placeholder="Enter your phone number"
-                    style={{ pointerEvents: 'auto' }}
+                    style={{ pointerEvents: 'auto', color: '#111827', backgroundColor: '#ffffff' }}
                   />
                 </div>
 
@@ -259,29 +319,32 @@ const PremiumStreetFood = () => {
                     value={bookingForm.date}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    style={{ pointerEvents: 'auto' }}
+                    min="2026-01-01"
+                    max="2030-12-31"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 font-medium"
+                    style={{ pointerEvents: 'auto', color: '#111827', backgroundColor: '#ffffff' }}
+                    placeholder="DD-MM-YYYY"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Format: DD-MM-YYYY (Date picker will show in your locale format)</p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Number of Guests *
+                    Number of Guests * (1-30)
                   </label>
-                  <select
+                  <input
+                    type="number"
                     name="guests"
                     value={bookingForm.guests}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  >
-                    <option value={1}>1 Guest</option>
-                    <option value={2}>2 Guests</option>
-                    <option value={3}>3 Guests</option>
-                    <option value={4}>4 Guests</option>
-                    <option value={5}>5 Guests</option>
-                    <option value={6}>6 Guests</option>
-                  </select>
+                    min="1"
+                    max="30"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 font-medium"
+                    style={{ pointerEvents: 'auto', color: '#111827', backgroundColor: '#ffffff' }}
+                    placeholder="Enter number of guests (1-30)"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Maximum 30 guests per booking</p>
                 </div>
 
                 <div>
@@ -293,9 +356,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 font-medium"
                     placeholder="Any dietary restrictions or special requests?"
-                    style={{ pointerEvents: 'auto' }}
+                    style={{ pointerEvents: 'auto', color: '#111827', backgroundColor: '#ffffff' }}
                   />
                 </div>
 
@@ -306,34 +369,34 @@ const PremiumStreetFood = () => {
                   Book Street Food Tour - $49 (1,250,000₫)
                 </button>
 
-                {/* PayPal Payment */}
-                <div className="mt-6 pt-6 border-t-2 border-gray-200">
-                  <div className="flex items-center justify-center gap-2 mb-4">
+                {/* PayPal Payment Button */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-center justify-center gap-2 mb-3">
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-                    <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Or</span>
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Or</span>
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.076 18.382c.155 1.093.908 1.864 2.05 1.864h1.438l.772-4.9h-1.439c-1.142 0-1.895.771-2.05 1.864l-.771 4.172zm12.847-8.182c-.155-1.093-.908-1.864-2.05-1.864h-1.439l-.772 4.9h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172z" fill="#003087"/>
-                        <path d="M20.61 6.375c-.155-1.093-.908-1.864-2.05-1.864h-1.439l-.772 4.9h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172zM9.126 6.375c-.155-1.093-.908-1.864-2.05-1.864H5.637L4.865 10.411h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172z" fill="#009CDE"/>
-                        <path d="M12.5 2C8.91 2 6 4.91 6 8.5s2.91 6.5 6.5 6.5 6.5-2.91 6.5-6.5S16.09 2 12.5 2zm0 11c-2.485 0-4.5-2.015-4.5-4.5S10.015 4 12.5 4 17 6.015 17 8.5 14.985 13 12.5 13z" fill="#012169"/>
-                      </svg>
-                      <span className="text-base font-semibold text-gray-800">Pay with PayPal</span>
-                    </div>
-                    <p className="text-xs text-center text-gray-600 mb-4">
-                      Secure payment • Instant confirmation
-                    </p>
-                    <div 
-                      className="flex justify-center min-h-[50px] items-center" 
-                      ref={paypalButtonRef} 
-                      style={{ pointerEvents: 'auto', zIndex: 1 }}
-                    >
-                      <div className="text-sm text-gray-400">Loading PayPal...</div>
-                    </div>
-                  </div>
+                  <a
+                    href="https://www.paypal.com/ncp/payment/W6KYF94SER9ML"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center justify-center gap-3 w-full px-6 py-3.5 bg-gradient-to-r from-[#0070ba] to-[#009cde] hover:from-[#005ea6] hover:to-[#0070ba] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7.076 18.382c.155 1.093.908 1.864 2.05 1.864h1.438l.772-4.9h-1.439c-1.142 0-1.895.771-2.05 1.864l-.771 4.172zm12.847-8.182c-.155-1.093-.908-1.864-2.05-1.864h-1.439l-.772 4.9h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172z" fill="white"/>
+                      <path d="M20.61 6.375c-.155-1.093-.908-1.864-2.05-1.864h-1.439l-.772 4.9h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172zM9.126 6.375c-.155-1.093-.908-1.864-2.05-1.864H5.637L4.865 10.411h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172z" fill="white"/>
+                      <path d="M12.5 2C8.91 2 6 4.91 6 8.5s2.91 6.5 6.5 6.5 6.5-2.91 6.5-6.5S16.09 2 12.5 2zm0 11c-2.485 0-4.5-2.015-4.5-4.5S10.015 4 12.5 4 17 6.015 17 8.5 14.985 13 12.5 13z" fill="white"/>
+                    </svg>
+                    <span className="text-base">Pay with PayPal</span>
+                    <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                  
+                  <p className="text-xs text-center text-gray-500 mt-3">
+                    Secure payment • Instant confirmation
+                  </p>
                 </div>
               </form>
 
@@ -346,6 +409,86 @@ const PremiumStreetFood = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={closeSuccessModal}
+          style={{ animation: 'fadeIn 0.3s ease-in-out' }}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            onClick={(e) => e.stopPropagation()}
+            style={{ animation: 'slideUp 0.3s ease-out' }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeSuccessModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Success Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Success Message */}
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
+              Booking Successful! 🎉
+            </h2>
+            <p className="text-center text-gray-600 mb-6">
+              Your Street Food Tour has been booked successfully. We'll contact you soon to confirm the details.
+            </p>
+
+            {/* Booking Details */}
+            <div className="bg-purple-50 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Tour:</strong> Street Food Tour on Scooter
+              </p>
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Price:</strong> $49 (1,250,000₫) per person
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Duration:</strong> 4 hours
+              </p>
+            </div>
+
+            {/* Action Button */}
+            {!hasClickedPayPal ? (
+              <button
+                onClick={handlePayPalClick}
+                className="group w-full inline-flex items-center justify-center gap-3 px-6 py-3.5 bg-gradient-to-r from-[#0070ba] to-[#009cde] hover:from-[#005ea6] hover:to-[#0070ba] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.076 18.382c.155 1.093.908 1.864 2.05 1.864h1.438l.772-4.9h-1.439c-1.142 0-1.895.771-2.05 1.864l-.771 4.172zm12.847-8.182c-.155-1.093-.908-1.864-2.05-1.864h-1.439l-.772 4.9h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172z" fill="white"/>
+                  <path d="M20.61 6.375c-.155-1.093-.908-1.864-2.05-1.864h-1.439l-.772 4.9h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172zM9.126 6.375c-.155-1.093-.908-1.864-2.05-1.864H5.637L4.865 10.411h1.439c1.142 0 1.895-.771 2.05-1.864l.772-4.172z" fill="white"/>
+                  <path d="M12.5 2C8.91 2 6 4.91 6 8.5s2.91 6.5 6.5 6.5 6.5-2.91 6.5-6.5S16.09 2 12.5 2zm0 11c-2.485 0-4.5-2.015-4.5-4.5S10.015 4 12.5 4 17 6.015 17 8.5 14.985 13 12.5 13z" fill="white"/>
+                </svg>
+                <span className="text-base">Pay with PayPal</span>
+                <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                onClick={closeSuccessModal}
+                className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl"
+              >
+                Close
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
