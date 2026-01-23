@@ -23,7 +23,6 @@ import NightLife from "./pages/tours/NightLife.jsx";
 // Booking Pages
 import HistoryTourBooking from "./pages/booking/history/HistoryTour.jsx";
 import CoffeeTourBooking from "./pages/booking/coffee/CoffeeTour.jsx";
-import BasicStreetFood from "./pages/booking/streetfood/BasicStreetFood.jsx";
 import PremiumStreetFood from "./pages/booking/streetfood/PremiumStreetFood.jsx";
 import PremiumNightLife from "./pages/booking/nightlife/PremiumNightLife.jsx";
 import BookingSuccess from "./pages/booking/success/BookingSuccess.jsx";
@@ -68,7 +67,7 @@ const App = () => {
             <Route path="/booking/history" element={<HistoryTourBooking />} />
             <Route path="/booking/history/basic" element={<HistoryTourBooking />} />
             <Route path="/booking/coffee/basic" element={<CoffeeTourBooking />} />
-            <Route path="/booking/streetfood/basic" element={<BasicStreetFood />} />
+            <Route path="/booking/streetfood" element={<PremiumStreetFood />} />
             <Route path="/booking/streetfood/premium" element={<PremiumStreetFood />} />
             <Route path="/booking/nightlife" element={<PremiumNightLife theme={theme} />} />
             <Route path="/booking/success" element={<BookingSuccess />} />

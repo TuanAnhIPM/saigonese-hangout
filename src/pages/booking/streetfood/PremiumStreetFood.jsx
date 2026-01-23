@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CountdownTimer from '../../../components/CountdownTimer.jsx';
 
 const PremiumStreetFood = () => {
+  const navigate = useNavigate();
   const [bookingForm, setBookingForm] = useState({
     name: '',
     email: '',
@@ -10,6 +12,8 @@ const PremiumStreetFood = () => {
     guests: 1,
     message: ''
   });
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const paypalButtonRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +25,87 @@ const PremiumStreetFood = () => {
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
-    alert('Booking submitted for Premium Street Food Tour! We\'ll contact you soon.');
-    window.location.href = '/booking/success';
+    
+    // Send booking information to WhatsApp
+    let message = "🍜 *NEW BOOKING - Street Food Tour on Scooter*\n\n";
+    message += `👤 *Customer Information:*\n`;
+    message += `Name: ${bookingForm.name}\n`;
+    message += `Email: ${bookingForm.email}\n`;
+    message += `Phone: ${bookingForm.phone}\n`;
+    message += `Preferred Date: ${bookingForm.date}\n`;
+    message += `Number of Guests: ${bookingForm.guests}\n`;
+    if (bookingForm.message) {
+      message += `Special Requests: ${bookingForm.message}\n`;
+    }
+    
+    message += `\n📋 *Tour Details:*\n`;
+    message += `Tour: Street Food Tour on Scooter\n`;
+    message += `Price: $49 (1,250,000₫) per person\n`;
+    message += `Duration: 4 hours\n`;
+    message += `Total: $${49 * bookingForm.guests} (${(1250000 * bookingForm.guests).toLocaleString('vi-VN')}₫)\n\n`;
+    message += `Thank you for choosing Saigonese Hang-out! 🇻🇳`;
+
+    const whatsappUrl = `https://wa.me/+84978270038?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    
+    // Show success modal
+    setShowSuccessModal(true);
+    
+    // Reset form after showing success
+    setBookingForm({
+      name: '',
+      email: '',
+      phone: '',
+      date: '',
+      guests: 1,
+      message: ''
+    });
   };
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    navigate('/');
+  };
+
+  useEffect(() => {
+    const renderPayPalButton = () => {
+      if (!paypalButtonRef.current || !window.PayPal || !window.PayPal.HostedButtons) {
+        return;
+      }
+      
+      // Clear any existing buttons
+      paypalButtonRef.current.innerHTML = '';
+      
+      window.PayPal.HostedButtons.render({
+        hostedButtonId: 'W6KYF94SER9ML'
+      }, paypalButtonRef.current).catch((err) => {
+        console.error('Error rendering PayPal hosted button:', err);
+      });
+    };
+
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="paypal.com/sdk/js"]');
+    if (existingScript && window.PayPal) {
+      setTimeout(renderPayPalButton, 100);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://www.paypal.com/sdk/js?client-id=BAAbjwCQd2Vdd59eqsfoRs9fxVGOQC85iqHq-L66VtN_2jSFu0aEpDz7QS1jHgEOT_2NOjKNxiZkmKIq64&components=hosted-buttons&disable-funding=venmo&currency=USD';
+    script.async = true;
+    
+    script.onload = () => {
+      if (window.PayPal && paypalButtonRef.current) {
+        renderPayPalButton();
+      }
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load PayPal SDK');
+    };
+
+    document.body.appendChild(script);
+  }, []);
 
   return (
     <div className="min-h-screen pb-8">
@@ -159,7 +241,7 @@ const PremiumStreetFood = () => {
             <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-800">Book Your Premium Tour</h2>
               
-              <form onSubmit={handleBookingSubmit} className="space-y-6">
+              <form onSubmit={handleBookingSubmit} className="space-y-6" style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name *
@@ -170,8 +252,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                     placeholder="Enter your full name"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -185,8 +268,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                     placeholder="Enter your email"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -200,8 +284,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                     placeholder="Enter your phone number"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -215,7 +300,8 @@ const PremiumStreetFood = () => {
                     value={bookingForm.date}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -228,7 +314,8 @@ const PremiumStreetFood = () => {
                     value={bookingForm.guests}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+                    style={{ color: '#111827' }}
                   >
                     <option value={1}>1 Guest</option>
                     <option value={2}>2 Guests</option>
@@ -248,8 +335,9 @@ const PremiumStreetFood = () => {
                     value={bookingForm.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                     placeholder="Any dietary restrictions or special requests?"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -263,19 +351,7 @@ const PremiumStreetFood = () => {
                 {/* PayPal Payment */}
                 <div className="border-t pt-4">
                   <p className="text-sm text-gray-600 mb-3 text-center">Or pay directly with PayPal:</p>
-                  <div className="flex justify-center">
-                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                      <input type="hidden" name="cmd" value="_xclick" />
-                      <input type="hidden" name="business" value="thestoriesguys@gmail.com" />
-                      <input type="hidden" name="item_name" value="Street Food Tour - $49 (1,250,000₫) per person" />
-                      <input type="hidden" name="currency_code" value="USD" />
-                      <input type="hidden" name="amount" value="49.00" />
-                      <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
-                      <input type="hidden" name="cancel_return" value="https://saigonese-hangout.com/booking/streetfood/premium" />
-                      <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" />
-                      <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-                    </form>
-                  </div>
+                  <div className="flex justify-center" ref={paypalButtonRef} style={{ pointerEvents: 'auto', zIndex: 1 }}></div>
                 </div>
               </form>
 
@@ -288,6 +364,69 @@ const PremiumStreetFood = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={closeSuccessModal}
+          style={{ animation: 'fadeIn 0.3s ease-in-out' }}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            onClick={(e) => e.stopPropagation()}
+            style={{ animation: 'slideUp 0.3s ease-out' }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeSuccessModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Success Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Success Message */}
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
+              Booking Successful!
+            </h2>
+            <p className="text-center text-gray-600 mb-6">
+              Your Street Food Tour has been booked successfully. We'll contact you soon to confirm the details.
+            </p>
+
+            {/* Booking Details */}
+            <div className="bg-purple-50 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Tour:</strong> Street Food Tour on Scooter
+              </p>
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>Price:</strong> $49 (1,250,000₫) per person
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Duration:</strong> 4 hours
+              </p>
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={closeSuccessModal}
+              className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-purple-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

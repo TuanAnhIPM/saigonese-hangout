@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const CoffeeTour = () => {
   const [bookingForm, setBookingForm] = useState({
@@ -9,6 +9,7 @@ const CoffeeTour = () => {
     guests: 1,
     message: ''
   });
+  const paypalButtonRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +24,74 @@ const CoffeeTour = () => {
     alert('Booking submitted for Coffee & Market Tour! We\'ll contact you soon.');
     window.location.href = '/booking/success';
   };
+
+  useEffect(() => {
+    const renderPayPalButtons = () => {
+      if (!paypalButtonRef.current || !window.PayPal) {
+        console.log('PayPal not ready or ref not available');
+        return;
+      }
+      
+      // Clear any existing buttons
+      paypalButtonRef.current.innerHTML = '';
+      
+      window.PayPal.Buttons({
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '45.00',
+                currency_code: 'USD'
+              },
+              description: 'Coffee & Market Tour - $45 per person'
+            }]
+          });
+        },
+        onApprove: (data, actions) => {
+          return actions.order.capture().then((details) => {
+            alert(`Transaction completed by ${details.payer.name.given_name}!`);
+            window.location.href = 'https://saigonesehangout.com/booking/success';
+          });
+        },
+        onCancel: (data) => {
+          window.location.href = 'https://saigonesehangout.com/booking/coffee';
+        },
+        onError: (err) => {
+          console.error('PayPal error:', err);
+        }
+      }).render(paypalButtonRef.current).catch((err) => {
+        console.error('Error rendering PayPal buttons:', err);
+      });
+    };
+
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="paypal.com/sdk/js"]');
+    if (existingScript && window.PayPal) {
+      // Script already loaded, render buttons immediately
+      setTimeout(renderPayPalButtons, 100);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://www.paypal.com/sdk/js?client-id=BAAbjwCQd2Vdd59eqsfoRs9fxVGOQC85iqHq-L66VtN_2jSFu0aEpDz7QS1jHgEOT_2NOjKNxiZkmKIq64&disable-funding=venmo&currency=USD';
+    script.async = true;
+    
+    script.onload = () => {
+      if (window.PayPal && paypalButtonRef.current) {
+        renderPayPalButtons();
+      }
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load PayPal SDK');
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Don't remove script on unmount as it might be used by other components
+    };
+  }, []);
 
   return (
     <div className="min-h-screen pb-8">
@@ -138,7 +207,7 @@ const CoffeeTour = () => {
           <div>
             <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-800">Book Your Coffee Tour</h2>
-              <form onSubmit={handleBookingSubmit} className="space-y-4">
+              <form onSubmit={handleBookingSubmit} className="space-y-4" style={{ pointerEvents: 'auto', position: 'relative', zIndex: 10 }}>
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700">
                     Full Name *
@@ -149,8 +218,9 @@ const CoffeeTour = () => {
                     value={bookingForm.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
                     placeholder="Enter your full name"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -164,8 +234,9 @@ const CoffeeTour = () => {
                     value={bookingForm.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
                     placeholder="Enter your email"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -179,8 +250,9 @@ const CoffeeTour = () => {
                     value={bookingForm.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
                     placeholder="Enter your phone number"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -195,7 +267,8 @@ const CoffeeTour = () => {
                       value={bookingForm.date}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
+                      style={{ pointerEvents: 'auto', color: '#111827' }}
                     />
                   </div>
 
@@ -208,7 +281,8 @@ const CoffeeTour = () => {
                       value={bookingForm.guests}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
+                      style={{ color: '#111827' }}
                     >
                       {[1,2,3,4,5,6].map(num => (
                         <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
@@ -223,7 +297,8 @@ const CoffeeTour = () => {
                   </label>
                   <select
                     name="coffeePreference"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
+                    style={{ color: '#111827' }}
                   >
                     <option value="">Select your preference</option>
                     <option value="sweet">Sweet coffee (Cà Phê Sữa Đá)</option>
@@ -242,8 +317,9 @@ const CoffeeTour = () => {
                     value={bookingForm.message}
                     onChange={handleInputChange}
                     rows="3"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
                     placeholder="Any dietary restrictions or special requests?"
+                    style={{ pointerEvents: 'auto', color: '#111827' }}
                   />
                 </div>
 
@@ -257,19 +333,7 @@ const CoffeeTour = () => {
                 {/* PayPal Payment */}
                 <div className="border-t pt-4">
                   <p className="text-sm text-gray-600 mb-3 text-center">Or pay directly with PayPal:</p>
-                  <div className="flex justify-center">
-                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                      <input type="hidden" name="cmd" value="_xclick" />
-                      <input type="hidden" name="business" value="thestoriesguys@gmail.com" />
-                      <input type="hidden" name="item_name" value="Coffee & Market Tour - $45 per person" />
-                      <input type="hidden" name="currency_code" value="USD" />
-                      <input type="hidden" name="amount" value="45.00" />
-                      <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
-                      <input type="hidden" name="cancel_return" value="https://saigonese-hangout.com/booking/coffee" />
-                      <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" />
-                      <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-                    </form>
-                  </div>
+                  <div className="flex justify-center" ref={paypalButtonRef} style={{ pointerEvents: 'auto', zIndex: 1 }}></div>
                 </div>
               </form>
 

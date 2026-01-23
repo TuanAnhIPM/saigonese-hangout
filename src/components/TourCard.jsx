@@ -120,7 +120,7 @@ const TourCard = ({ title, desc, price, originalPrice, duration, highlights, faq
                   <span className={`flex-shrink-0 text-base font-bold ${isMorning ? "text-green-600" : "text-green-400"}`}>
                     ✓
                   </span>
-                  <span className="text-sm leading-relaxed text-center">{highlight}</span>
+                  <span className={`text-sm leading-relaxed text-center ${isMorning ? "text-gray-700" : "text-gray-200"}`}>{highlight}</span>
                 </div>
               ))}
             </div>
