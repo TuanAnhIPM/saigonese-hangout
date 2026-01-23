@@ -22,7 +22,7 @@ const CoffeeTour = () => {
   const handleBookingSubmit = (e) => {
     e.preventDefault();
     alert('Booking submitted for Coffee & Market Tour! We\'ll contact you soon.');
-    window.location.href = '/booking/success';
+    window.location.href = '/';
   };
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const CoffeeTour = () => {
         onApprove: (data, actions) => {
           return actions.order.capture().then((details) => {
             alert(`Transaction completed by ${details.payer.name.given_name}!`);
-            window.location.href = 'https://saigonesehangout.com/booking/success';
+            window.location.href = 'https://saigonesehangout.com/';
           });
         },
         onCancel: (data) => {

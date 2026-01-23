@@ -25,7 +25,6 @@ import HistoryTourBooking from "./pages/booking/history/HistoryTour.jsx";
 import CoffeeTourBooking from "./pages/booking/coffee/CoffeeTour.jsx";
 import PremiumStreetFood from "./pages/booking/streetfood/PremiumStreetFood.jsx";
 import PremiumNightLife from "./pages/booking/nightlife/PremiumNightLife.jsx";
-import BookingSuccess from "./pages/booking/success/BookingSuccess.jsx";
 
 const App = () => {
   const [theme, setTheme] = useState("night");
@@ -70,7 +69,6 @@ const App = () => {
             <Route path="/booking/streetfood" element={<PremiumStreetFood />} />
             <Route path="/booking/streetfood/premium" element={<PremiumStreetFood />} />
             <Route path="/booking/nightlife" element={<PremiumNightLife theme={theme} />} />
-            <Route path="/booking/success" element={<BookingSuccess />} />
           </Routes>
         </main>
       </BrowserRouter>

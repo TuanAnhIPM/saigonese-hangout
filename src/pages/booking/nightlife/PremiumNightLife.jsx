@@ -22,7 +22,7 @@ const PremiumNightLife = ({ theme }) => {
   const handleBookingSubmit = (e) => {
     e.preventDefault();
     alert('Booking submitted for Night-Life Tour! We\'ll contact you soon.');
-    window.location.href = '/booking/success';
+    window.location.href = '/';
   };
 
   return (
@@ -236,7 +236,7 @@ const PremiumNightLife = ({ theme }) => {
                       <input type="hidden" name="item_name" value="Night-Life Tour - $59 per person" />
                       <input type="hidden" name="currency_code" value="USD" />
                       <input type="hidden" name="amount" value="59.00" />
-                      <input type="hidden" name="return" value="https://saigonese-hangout.com/booking/success" />
+                      <input type="hidden" name="return" value="https://saigonesehangout.com/" />
                       <input type="hidden" name="cancel_return" value="https://saigonese-hangout.com/booking/nightlife/premium" />
                       <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" />
                       <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
